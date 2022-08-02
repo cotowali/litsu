@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32112.339
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Litsu", "Litsu\Litsu.fsproj", "{A44AE1AB-827E-48E4-AAC1-4584F1F44E55}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A44AE1AB-827E-48E4-AAC1-4584F1F44E55}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A44AE1AB-827E-48E4-AAC1-4584F1F44E55}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A44AE1AB-827E-48E4-AAC1-4584F1F44E55}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A44AE1AB-827E-48E4-AAC1-4584F1F44E55}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2286EA33-24D0-4DA3-A48F-09EF17738D1E}
+	EndGlobalSection
+EndGlobal
