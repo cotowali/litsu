@@ -1,0 +1,2 @@
+[*.{fs,fsx,fsi}]
+indent_size=2
