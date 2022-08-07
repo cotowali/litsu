@@ -1,0 +1,11 @@
+default: run
+tasks:
+  run: dotnet run --project Litsu
+  build: dotnet build
+  tools:
+    tasks:
+      fantomas: dotnet tool run fantomas -- $@
+      fsharplint: dotnet tool run dotnet-fsharplint -- $@
+  fmt: z tools.fantomas . -r $@
+  fmt.check: z fmt --check
+  lint: z tools.fsharplint lint Litsu.sln
