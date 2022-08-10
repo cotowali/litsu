@@ -6,7 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Litsu.fs" />
+    <Compile Include="Parser.fs" />
+    <Compile Include="Compiler.fs" />
   </ItemGroup>
 
   <ItemGroup>
