@@ -5,6 +5,8 @@ VisualStudioVersion = 17.0.32112.339
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Litsu", "Litsu\Litsu.fsproj", "{A44AE1AB-827E-48E4-AAC1-4584F1F44E55}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "tsuc", "tsuc\tsuc.fsproj", "{0AC48E11-0BE4-4E37-9855-A88A7709F40A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{A44AE1AB-827E-48E4-AAC1-4584F1F44E55}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A44AE1AB-827E-48E4-AAC1-4584F1F44E55}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A44AE1AB-827E-48E4-AAC1-4584F1F44E55}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0AC48E11-0BE4-4E37-9855-A88A7709F40A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0AC48E11-0BE4-4E37-9855-A88A7709F40A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0AC48E11-0BE4-4E37-9855-A88A7709F40A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0AC48E11-0BE4-4E37-9855-A88A7709F40A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
