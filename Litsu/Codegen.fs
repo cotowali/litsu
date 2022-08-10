@@ -4,14 +4,9 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-module Litsu.Compiler
+module Litsu.Codegen
 
 open System.IO
-open System.Text
-open Litsu.Parser
-open Litsu.Codegen
 
-let compile code =
-  let out = new StringBuilder()
-  parse code |> codegen (new StringWriter(out))
-  out.ToString()
+let codegen (writer: TextWriter) value =
+  writer.Write($"printf '%%d\\n' {value}")
