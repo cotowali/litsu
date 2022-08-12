@@ -4,13 +4,8 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-module Litsu.Codegen
+module Litsu.SyntaxTree
 
-open System.IO
-open Litsu.SyntaxTree
+type Expr = Int of int64
 
-let codegen (writer: TextWriter) (node: Node): unit =
-  match node with
-  | Expr(expr) ->
-    let v = match expr with Int(n) -> sprintf "%d" n
-    writer.Write($"printf '%%s\\n' {v}")
+type Node = Expr of Expr

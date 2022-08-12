@@ -7,8 +7,9 @@
 module Litsu.Parser
 
 open FParsec
+open Litsu.SyntaxTree
 
 let parse text =
   match run pint64 text with
-  | Success (res, _, _) -> sprintf "%d" res
+  | Success (n, _, _) -> Node.Expr(Expr.Int n)
   | Failure (msg, _, _) -> failwithf "parse error: %s" msg

@@ -2,5 +2,6 @@ namespace Litsu
     
     module Codegen =
         
-        val codegen: writer: System.IO.TextWriter -> value: 'a -> unit
+        val codegen:
+          writer: System.IO.TextWriter -> node: SyntaxTree.Node -> unit
 
