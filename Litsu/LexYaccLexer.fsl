@@ -1,0 +1,23 @@
+{
+open FSharp.Text.Lexing
+open Litsu.LexYaccParser
+
+let lexeme = LexBuffer<_>.LexemeString
+
+let newline (lexbuf: LexBuffer<_>) =
+  lexbuf.StartPos <- lexbuf.StartPos.NextLine
+}
+
+let whitespace = [' ' '\t']
+let newline = ('\n' | '\r' '\n')
+
+let digit = ['0'-'9']
+
+let int = digit+
+
+rule read = parse
+| whitespace { read lexbuf }
+| newline    { newline lexbuf; read lexbuf }
+| int        { INT(lexeme lexbuf |> int64) }
+| eof        { EOF }
+| _          { failwith ("ParseError" + LexBuffer<_>.LexemeString lexbuf) }

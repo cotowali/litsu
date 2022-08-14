@@ -6,10 +6,9 @@
 
 module Litsu.Parser
 
-open FParsec
+open FSharp.Text.Lexing
 open Litsu.SyntaxTree
 
-let parse text =
-  match run pint64 text with
-  | Success (n, _, _) -> Node.Expr(Expr.Int n)
-  | Failure (msg, _, _) -> failwithf "parse error: %s" msg
+let parse text: SyntaxTree.Node =
+  let lexbuf = LexBuffer<char>.FromString text
+  LexYaccParser.program LexYaccLexer.read lexbuf

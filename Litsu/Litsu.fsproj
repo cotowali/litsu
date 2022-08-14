@@ -8,13 +8,21 @@
 
   <ItemGroup>
     <Compile Include="SyntaxTree.fs" />
+    <FsYacc Include="LexYaccParser.fsy">
+      <OtherFlags>--module Litsu.LexYaccParser --internal</OtherFlags>
+    </FsYacc>
+    <Compile Include="LexYaccParser.fs" />
+    <FsLex Include="LexYaccLexer.fsl">
+      <OtherFlags>--module Litsu.LexYaccLexer --internal --unicode</OtherFlags>
+    </FsLex>
+    <Compile Include="LexYaccLexer.fs" />
     <Compile Include="Parser.fs" />
     <Compile Include="Codegen.fs" />
     <Compile Include="Compiler.fs" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="FParsec" Version="1.1.1" />
+    <PackageReference Include="FsLexYacc" Version="10.2.0" />
   </ItemGroup>
 
 </Project>

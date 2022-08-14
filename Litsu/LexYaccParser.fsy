@@ -1,0 +1,18 @@
+%{
+open Litsu.SyntaxTree
+%}
+
+%start program
+
+%token EOF
+%token <int64> INT
+
+%type <SyntaxTree.Node> program
+
+%%
+
+program:
+  | expr EOF { Node.Expr $1 }
+
+expr:
+  | INT { Expr.Int $1 }
