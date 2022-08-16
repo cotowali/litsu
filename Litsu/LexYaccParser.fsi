@@ -4,11 +4,13 @@ namespace Litsu
         
         type token =
             | PLUS
+            | MINUS
             | INT of int64
             | EOF
         
         type tokenId =
             | TOKEN_PLUS
+            | TOKEN_MINUS
             | TOKEN_INT
             | TOKEN_EOF
             | TOKEN_end_of_input
