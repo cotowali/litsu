@@ -7,6 +7,9 @@ open Litsu.SyntaxTree
 %token EOF
 %token <int64> INT
 
+%token PLUS
+%left PLUS
+
 %type <SyntaxTree.Node> program
 
 %%
@@ -15,4 +18,5 @@ program:
   | expr EOF { Node.Expr $1 }
 
 expr:
+  | expr PLUS expr { Expr.Add($1, $3) }
   | INT { Expr.Int $1 }

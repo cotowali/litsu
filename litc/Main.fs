@@ -6,4 +6,4 @@
 
 open Litsu.Compiler
 
-"42" |> compile |> printfn "%s"
+"1 + 2 + 3" |> compile |> printfn "%s"

@@ -3,10 +3,12 @@ namespace Litsu
     module internal LexYaccParser =
         
         type token =
+            | PLUS
             | INT of int64
             | EOF
         
         type tokenId =
+            | TOKEN_PLUS
             | TOKEN_INT
             | TOKEN_EOF
             | TOKEN_end_of_input
@@ -30,7 +32,7 @@ namespace Litsu
         
         val token_to_string: t: token -> string
         
-        val _fsyacc_dataOfToken: t: token -> obj
+        val _fsyacc_dataOfToken: t: token -> System.Object
         
         val _fsyacc_gotos: uint16[]
         

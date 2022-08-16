@@ -9,8 +9,12 @@ module Litsu.Codegen
 open System.IO
 open Litsu.SyntaxTree
 
-let codegen (writer: TextWriter) (node: Node): unit =
+let codegen (writer: TextWriter) (node: Node) : unit =
   match node with
-  | Expr(expr) ->
-    let v = match expr with Int(n) -> sprintf "%d" n
-    writer.Write($"printf '%%s\\n' {v}")
+  | Expr (expr) ->
+    let rec f: Expr -> string =
+      function
+      | Int (n) -> sprintf "%d" n
+      | Add (lhs, rhs) -> sprintf "$(( %s + %s ))" (f lhs) (f rhs)
+
+    writer.Write($"printf '%%s\\n' \"{f expr}\"")
