@@ -16,7 +16,7 @@ open Litsu.Parser
 open Litsu.Codegen
 
 type Runner() =
-  member _this.run(code: string, ?stdin: Stream, ?stdout: Stream, ?stderr: Stream) : int =
+  member _this.Run(code: string, ?stdin: Stream, ?stdout: Stream, ?stderr: Stream) : int =
 
     let stdin = defaultArg stdin (Console.OpenStandardInput())
     let stdout = defaultArg stdout (Console.OpenStandardOutput())
@@ -28,7 +28,7 @@ type Runner() =
     use file =
       new StreamWriter(
         outPath,
-        new UTF8Encoding(false),
+        UTF8Encoding(false),
         FileStreamOptions(Access = FileAccess.ReadWrite, Mode = FileMode.CreateNew, Options = FileOptions.DeleteOnClose)
       )
 
@@ -48,4 +48,4 @@ type Runner() =
 
     res.ExitCode
 
-let run code = Runner().run code
+let run code = Runner().Run code

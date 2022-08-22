@@ -12,6 +12,6 @@ open Litsu.Parser
 open Litsu.Codegen
 
 let compile code =
-  let out = new StringBuilder()
+  let out = StringBuilder()
   parse code |> codegen (new StringWriter(out))
   out.ToString()
