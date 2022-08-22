@@ -16,11 +16,7 @@ open Litsu.Parser
 open Litsu.Codegen
 
 type Runner() =
-  member _this.run(
-    code: string,
-    ?stdin: Stream,
-    ?stdout: Stream,
-    ?stderr: Stream): int =
+  member _this.run(code: string, ?stdin: Stream, ?stdout: Stream, ?stderr: Stream) : int =
 
     let stdin = defaultArg stdin (Console.OpenStandardInput())
     let stdout = defaultArg stdout (Console.OpenStandardOutput())
@@ -28,26 +24,33 @@ type Runner() =
 
     let filename = $"litsu_{DateTime.UtcNow.Ticks}.sh"
     let outPath = Path.Join(Path.GetTempPath(), filename)
-    use file = new StreamWriter(
-      outPath,
-      new UTF8Encoding(false),
-      FileStreamOptions(
-        Access = FileAccess.ReadWrite,
-        Mode = FileMode.CreateNew,
-        Options = FileOptions.DeleteOnClose
-      ))
+
+    use file =
+      new StreamWriter(
+        outPath,
+        new UTF8Encoding(false),
+        FileStreamOptions(Access = FileAccess.ReadWrite, Mode = FileMode.CreateNew, Options = FileOptions.DeleteOnClose)
+      )
 
     compile code |> file.Write
     file.Flush()
 
-    let res = (Cli.Wrap("sh")
-        .WithArguments(outPath)
-        .WithStandardInputPipe(PipeSource.FromStream(stdin))
-        .WithStandardOutputPipe(PipeTarget.ToStream(stdout))
-        .WithStandardErrorPipe(PipeTarget.ToStream(stderr))
-        .WithValidation(CommandResultValidation.None)
-        .ExecuteAsync().Task.Result
+    let res =
+      (Cli.Wrap("sh").WithArguments(outPath).WithStandardInputPipe(
+        PipeSource.FromStream(stdin)
       )
+        .WithStandardOutputPipe(
+        PipeTarget.ToStream(stdout)
+      )
+        .WithStandardErrorPipe(
+        PipeTarget.ToStream(stderr)
+      )
+        .WithValidation(
+        CommandResultValidation.None
+      )
+        .ExecuteAsync()
+        .Task
+        .Result)
 
     res.ExitCode
 

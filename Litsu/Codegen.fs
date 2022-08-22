@@ -16,6 +16,6 @@ let codegen (writer: TextWriter) (node: Node) : unit =
       function
       | Int (n) -> sprintf "%d" n
       | Add (lhs, rhs) -> sprintf "$(( %s + %s ))" (f lhs) (f rhs)
-      | Sub(lhs, rhs) -> sprintf "$(( %s - %s ))" (f lhs) (f rhs)
+      | Sub (lhs, rhs) -> sprintf "$(( %s - %s ))" (f lhs) (f rhs)
 
     writer.Write($"printf '%%s\\n' \"{f expr}\"")
