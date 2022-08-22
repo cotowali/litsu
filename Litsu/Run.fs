@@ -35,22 +35,16 @@ type Runner() =
     compile code |> file.Write
     file.Flush()
 
-    let res =
-      (Cli.Wrap("sh").WithArguments(outPath).WithStandardInputPipe(
-        PipeSource.FromStream(stdin)
-      )
-        .WithStandardOutputPipe(
-        PipeTarget.ToStream(stdout)
-      )
-        .WithStandardErrorPipe(
-        PipeTarget.ToStream(stderr)
-      )
-        .WithValidation(
-        CommandResultValidation.None
-      )
-        .ExecuteAsync()
-        .Task
-        .Result)
+    let cmd = Cli.Wrap("sh").WithArguments(outPath)
+    let cmd = cmd.WithValidation(CommandResultValidation.None)
+    let stdinPipe = PipeSource.FromStream(stdin)
+    let cmd = cmd.WithStandardInputPipe(stdinPipe)
+    let stdoutPipe = PipeTarget.ToStream(stdout)
+    let cmd = cmd.WithStandardOutputPipe(stdoutPipe)
+    let stderrPipe = PipeTarget.ToStream(stderr)
+    let cmd = cmd.WithStandardErrorPipe(stderrPipe)
+
+    let res = (cmd.ExecuteAsync().Task.Result)
 
     res.ExitCode
 
