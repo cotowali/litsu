@@ -5,5 +5,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 open Litsu.Compiler
+open Litsu.Run
 
 "1 + 2 - 3 + 4 - 5" |> compile |> printfn "%s"
+run "1 + 2 - 3 + 4 - 5" |> printfn "%d"
