@@ -1,5 +1,7 @@
 %{
 open Litsu.SyntaxTree
+
+// fsharplint:disable
 %}
 
 %start program

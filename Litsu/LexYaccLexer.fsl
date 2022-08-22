@@ -6,6 +6,8 @@ let lexeme = LexBuffer<_>.LexemeString
 
 let newline (lexbuf: LexBuffer<_>) =
   lexbuf.StartPos <- lexbuf.StartPos.NextLine
+
+// fsharplint:disable
 }
 
 let whitespace = [' ' '\t']
