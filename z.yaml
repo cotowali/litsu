@@ -1,6 +1,6 @@
 default: run
 tasks:
-  run: dotnet run --project litc
+  run: dotnet run --project litc -- $@
   build: dotnet build
   tools:
     tasks:
