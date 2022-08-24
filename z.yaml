@@ -2,6 +2,7 @@ default: run
 tasks:
   run: dotnet run --project litc -- $@
   build: dotnet build
+  test: dotnet test
   tools:
     tasks:
       fantomas: dotnet tool run fantomas -- $@
