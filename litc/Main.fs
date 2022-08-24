@@ -39,7 +39,12 @@ let main argv =
   let code =
     use file =
       (match results.GetResults(MainArgs.File) with
-       | [] -> Console.In
+       | [] ->
+         (if Console.IsInputRedirected then
+            Console.In
+          else
+            p.PrintUsage() |> printf "%s"
+            exit 0)
        | [ path ] -> new StreamReader(path)
        | _ -> eprintfn "too many input" |> exit 1)
 
