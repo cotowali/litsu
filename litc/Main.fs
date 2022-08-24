@@ -10,7 +10,7 @@ open System.IO
 open Litsu.Compiler
 open Litsu.Run
 
-type Arguments =
+type MainArgs =
   | [<MainCommand>] File of file: string
   | Run
 
@@ -23,7 +23,7 @@ type Arguments =
 [<EntryPoint>]
 let main argv =
   let p =
-    ArgumentParser.Create<Arguments>(
+    ArgumentParser.Create<MainArgs>(
       programName = "litc",
       errorHandler =
         ProcessExiter(
@@ -38,14 +38,14 @@ let main argv =
 
   let code =
     use file =
-      (match results.GetResults(Arguments.File) with
+      (match results.GetResults(MainArgs.File) with
        | [] -> Console.In
        | [ path ] -> new StreamReader(path)
        | _ -> eprintfn "too many input" |> exit 1)
 
     file.ReadToEnd()
 
-  let isRun = List.contains Arguments.Run (results.GetResults(Arguments.Run))
+  let isRun = List.contains MainArgs.Run (results.GetResults(MainArgs.Run))
 
   if isRun then
     run code
