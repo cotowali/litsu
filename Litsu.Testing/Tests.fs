@@ -1,4 +1,4 @@
-module Tests
+module Litsu.Testsing
 
 open System.IO
 open Expecto

@@ -7,7 +7,7 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Litsu", "Litsu\Litsu.fsproj
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "litc", "litc\litc.fsproj", "{0AC48E11-0BE4-4E37-9855-A88A7709F40A}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Litsu.Test", "Litsu.Test\Litsu.Test.fsproj", "{5A6CC4AC-4E2A-4F86-9577-D802F3C6D6B5}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Litsu.Testing", "Litsu.Testing\Litsu.Testing.fsproj", "{5A6CC4AC-4E2A-4F86-9577-D802F3C6D6B5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
