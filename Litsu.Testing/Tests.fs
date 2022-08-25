@@ -24,4 +24,14 @@ let runCode code : string =
 [<Tests>]
 let tests =
   let settings = Settings()
-  testTask "1 + 1" { do! Verifier.Verify("add", runCode "1 + 1", settings, "tests") }
+
+  let testsDir = Path.Combine(settings.SolutionDirectory, "tests")
+  let testFiles =
+    let searchOption = SearchOption.AllDirectories
+    Directory.GetFiles(testsDir, "*.lit", searchOption) |> Array.toList
+
+  List.map (fun (testFilePath: string) ->
+    let name = Path.GetFileName(testFilePath)
+    let code = using(new StreamReader(testFilePath)) (fun r -> r.ReadToEnd())
+    testTask name { do! Verifier.Verify(name, runCode code, settings, "tests") }
+  ) testFiles |> testList "tests"

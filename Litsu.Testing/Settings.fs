@@ -11,9 +11,15 @@ open System.Runtime.InteropServices
 open VerifyTests
 open System.IO
 
-type Settings([<CallerFilePath; Optional>] path: string) as this =
+type Settings([<CallerFilePath; Optional; DefaultParameterValue("")>] path: string) as this=
   inherit VerifySettings()
-  do this.UseDirectory(this.GetOutputDirectory())
+  let dir = Path.GetDirectoryName(path)
+  let outputPath = Path.Combine(dir, "output")
+  let mutable solutionDirectory = dir
+  do
+    while Directory.GetFiles(solutionDirectory, "*.sln").Length = 0 do
+      solutionDirectory <- Directory.GetParent(solutionDirectory).FullName
+  do this.UseDirectory(this.OutputPath)
 
-  member private _.GetOutputDirectory([<CallerFilePath; Optional; DefaultParameterValue("")>] path: string) : string =
-    Path.Combine(Path.GetDirectoryName(path), "output")
+  member this.OutputPath with get() = outputPath
+  member this.SolutionDirectory with get() = solutionDirectory
