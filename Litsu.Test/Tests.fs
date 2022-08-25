@@ -2,38 +2,26 @@ module Tests
 
 open System.IO
 open Expecto
+open VerifyTests
+open VerifyExpecto
 open Litsu.Run
+open Litsu.Tests
 
 type RunResult =
   { ExitCode: int
     Stdout: string
     Stderr: string }
 
-let runCode code : RunResult =
+let runCode code : string =
   use stdin = new MemoryStream()
-  use stdout = new MemoryStream()
-  use stderr = new MemoryStream()
+  use out = new MemoryStream()
 
-  let exitCode = Runner().Run(code, stdin, stdout, stderr)
+  let exitCode = Runner().Run(code, stdin, out, out)
 
-  stdout.Seek(0, SeekOrigin.Begin) |> ignore
-  stderr.Seek(0, SeekOrigin.Begin) |> ignore
-  use stdoutReader = new StreamReader(stdout)
-  use stderrReader = new StreamReader(stderr)
-
-  { ExitCode = exitCode
-    Stdout = stdoutReader.ReadToEnd()
-    Stderr = stderrReader.ReadToEnd() }
+  out.Seek(0, SeekOrigin.Begin) |> ignore
+  using (new StreamReader(out)) (fun r -> r.ReadToEnd())
 
 [<Tests>]
 let tests =
-  testList
-    "valid codes"
-    [ test "1 + 1" {
-        Expect.equal
-          (runCode "1 + 1")
-          { ExitCode = 0
-            Stdout = "2\n"
-            Stderr = "" }
-          "1 + 1 = 2"
-      } ]
+  let settings = Settings()
+  testTask "1 + 1" { do! Verifier.Verify("add", runCode "1 + 1", settings, "tests") }
