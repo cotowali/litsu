@@ -8,14 +8,23 @@ module Litsu.Codegen
 
 open System.IO
 open Litsu.SyntaxTree
+open Litsu.Type
+
+let failwithUnknownType = failwith "Unknown Type"
 
 let codegen (writer: TextWriter) (node: Node) : unit =
   match node with
   | Expr (expr) ->
     let rec f: Expr -> string =
       function
-      | Int (n) -> sprintf "%d" n
-      | Add (lhs, rhs) -> sprintf "$(( %s + %s ))" (f lhs) (f rhs)
-      | Sub (lhs, rhs) -> sprintf "$(( %s - %s ))" (f lhs) (f rhs)
+      | Expr.Int (n) -> sprintf "%d" n
+      | Add (lhs, rhs) ->
+        match typInfix lhs rhs with
+        | Type.Int -> sprintf "$(( %s + %s ))" (f lhs) (f rhs)
+        | Type.Unknown -> failwithUnknownType
+      | Sub (lhs, rhs) ->
+        match typInfix lhs rhs with
+        | Type.Int -> sprintf "$(( %s - %s ))" (f lhs) (f rhs)
+        | Type.Unknown -> failwithUnknownType
 
     writer.Write($"printf '%%s\\n' \"{f expr}\"")
