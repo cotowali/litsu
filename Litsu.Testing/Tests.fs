@@ -35,6 +35,13 @@ let tests =
     (fun (testFilePath: string) ->
       let name = Path.GetFileName(testFilePath)
       let code = using (new StreamReader(testFilePath)) (fun r -> r.ReadToEnd())
-      testTask name { do! Verifier.Verify(name, runCode code, settings, "tests") })
+
+      testTask name {
+        if name.EndsWith("fail.lit") then
+          let message = sprintf "`%s` should be compile error" name
+          Expect.throws (fun () -> runCode code |> ignore) message
+        else
+          do! Verifier.Verify(name, runCode code, settings, "tests")
+      })
     testFiles
   |> testList "tests"
