@@ -29,7 +29,7 @@ type Runner() =
       new StreamWriter(
         outPath,
         UTF8Encoding(false),
-        FileStreamOptions(Access = FileAccess.ReadWrite, Mode = FileMode.CreateNew, Options = FileOptions.DeleteOnClose)
+        FileStreamOptions(Access = FileAccess.ReadWrite, Mode = FileMode.Create, Options = FileOptions.DeleteOnClose)
       )
 
     compile code |> file.Write
