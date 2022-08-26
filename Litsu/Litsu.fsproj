@@ -18,12 +18,9 @@
     <Compile Include="LexYaccLexer.fs" />
     <Compile Include="Parser.fs" />
     <Compile Include="Codegen.fs" />
-    <Compile Include="Compiler.fs" />
-    <Compile Include="Run.fs" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="CliWrap" Version="3.4.4" />
     <PackageReference Include="FsLexYacc" Version="10.2.0" />
   </ItemGroup>
 

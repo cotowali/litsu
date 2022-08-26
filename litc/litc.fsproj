@@ -11,6 +11,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Litsu\Litsu.fsproj" />
+    <ProjectReference Include="..\Litsu.Compiler\Litsu.Compiler.fsproj" />
+    <ProjectReference Include="..\Litsu.Run\Litsu.Run.fsproj" />
   </ItemGroup>
 
   <ItemGroup>
