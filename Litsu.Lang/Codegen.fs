@@ -4,11 +4,11 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-module Litsu.Codegen
+module Litsu.Lang.Codegen
 
 open System.IO
-open Litsu.SyntaxTree
-open Litsu.Type
+open Litsu.Lang.SyntaxTree
+open Litsu.Lang.Type
 
 let failwithUnknownType = failwith "Unknown Type"
 

@@ -4,9 +4,9 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-module Litsu.SyntaxTree
+module Litsu.Lang.SyntaxTree
 
-open Litsu.Type
+open Litsu.Lang.Type
 
 type Expr =
   | Int of int64

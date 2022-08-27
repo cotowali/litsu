@@ -1,4 +1,4 @@
-namespace Litsu
+namespace Litsu.Lang
     
     module TypeChecker =
         

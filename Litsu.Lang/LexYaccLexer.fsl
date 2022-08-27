@@ -1,6 +1,6 @@
 {
 open FSharp.Text.Lexing
-open Litsu.LexYaccParser
+open Litsu.Lang.LexYaccParser
 
 let lexeme = LexBuffer<_>.LexemeString
 

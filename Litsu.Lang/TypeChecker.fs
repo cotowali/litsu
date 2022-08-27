@@ -4,10 +4,10 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-module Litsu.TypeChecker
+module Litsu.Lang.TypeChecker
 
-open Litsu.Type
-open Litsu.SyntaxTree
+open Litsu.Lang.Type
+open Litsu.Lang.SyntaxTree
 
 let failCheck = failwith "Type Error"
 

@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Litsu\Litsu.fsproj" />
+    <ProjectReference Include="..\Litsu.Lang\Litsu.Lang.fsproj" />
     <ProjectReference Include="..\Litsu.Compiler\Litsu.Compiler.fsproj" />
   </ItemGroup>
 
