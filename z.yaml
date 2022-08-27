@@ -1,8 +1,8 @@
 default: run
 tasks:
   run: dotnet run --project litc -- $@
-  build: dotnet build
-  test: dotnet test
+  build: dotnet build $@
+  test: dotnet test $@
   tools:
     tasks:
       fantomas: dotnet tool run fantomas -- $@
@@ -10,5 +10,5 @@ tasks:
       fslex: dotnet ~/.nuget/packages/fslexyacc/*/build/fslex/netcoreapp3.1/fslex.dll -o - $@
       fsyacc: dotnet ~/.nuget/packages/fslexyacc/10.*/build/fsyacc/*/fsyacc.dll -o - $@
   fmt: z tools.fantomas ./**/*.fs -r $@
-  fmt.check: z fmt --check
+  fmt.check: z fmt --check $@
   lint: z tools.fsharplint lint Litsu.sln
