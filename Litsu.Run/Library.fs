@@ -12,8 +12,6 @@ open System.Text
 open System.Diagnostics
 open CliWrap
 open Litsu.Compiler
-open Litsu.Lang.Parser
-open Litsu.Lang.Codegen
 
 type Runner() =
   member _this.Run(code: string, ?stdin: Stream, ?stdout: Stream, ?stderr: Stream) : int =
