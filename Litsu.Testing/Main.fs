@@ -1,4 +1,4 @@
-﻿module Litsu.Testing
+﻿module Litsu.Testing.Main
 
 open Expecto
 

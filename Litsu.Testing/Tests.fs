@@ -1,11 +1,11 @@
-module Litsu.Testsing
+module Litsu.Testing.Tests
 
 open System.IO
 open Expecto
 open VerifyTests
 open VerifyExpecto
 open Litsu.Run
-open Litsu.Tests
+open Litsu.Testing.Settings
 
 type RunResult =
   { ExitCode: int
