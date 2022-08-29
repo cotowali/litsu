@@ -5,4 +5,5 @@ namespace Litsu.Lang
         type Type =
             | Unknown
             | Int
+            | Bool
 

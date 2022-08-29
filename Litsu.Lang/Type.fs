@@ -9,3 +9,4 @@ module Litsu.Lang.Type
 type Type =
   | Unknown
   | Int
+  | Bool

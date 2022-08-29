@@ -12,16 +12,18 @@ type Expr =
   | Int of int64
   | Add of Expr * Expr
   | Sub of Expr * Expr
+  | Eq of Expr * Expr
 
-let rec typInfix (lhs: Expr) (rhs: Expr) =
-  let lType = typ (lhs)
-  let rType = typ (rhs)
-  if lType = rType then lType else Type.Unknown
-
-and typ: (Expr -> Type) =
+let rec typ: (Expr -> Type) =
   function
   | Expr.Int (_) -> Type.Int
   | Expr.Add (lhs, rhs) -> typInfix lhs rhs
   | Expr.Sub (lhs, rhs) -> typInfix lhs rhs
+  | Expr.Eq (_) -> Type.Bool
+
+and typInfix (lhs: Expr) (rhs: Expr) =
+  let lType = typ (lhs)
+  let rType = typ (rhs)
+  if lType = rType then lType else Type.Unknown
 
 type Node = Expr of Expr

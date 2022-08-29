@@ -10,7 +10,7 @@ open System.IO
 open Litsu.Lang.SyntaxTree
 open Litsu.Lang.Type
 
-let failwithUnknownType = failwith "Unknown Type"
+let unreachable = failwith "Unreachable"
 
 let codegen (writer: TextWriter) (node: Node) : unit =
   match node with
@@ -21,10 +21,19 @@ let codegen (writer: TextWriter) (node: Node) : unit =
       | Add (lhs, rhs) ->
         match typInfix lhs rhs with
         | Type.Int -> sprintf "$(( %s + %s ))" (f lhs) (f rhs)
-        | Type.Unknown -> failwithUnknownType
+        | _ -> unreachable
       | Sub (lhs, rhs) ->
         match typInfix lhs rhs with
         | Type.Int -> sprintf "$(( %s - %s ))" (f lhs) (f rhs)
-        | Type.Unknown -> failwithUnknownType
+        | _ -> unreachable
+      | Eq (lhs, rhs) ->
+        let op =
+          match typ lhs with
+          | Type.Int -> "-eq"
+          | Type.Bool -> "="
+          | _ -> unreachable in
+
+        let cond = sprintf "[ \"%s\" %s \"%s\" ]" (f lhs) op (f rhs) in
+        sprintf "$(%s && printf 'true' || printf 'false')" cond
 
     writer.Write($"printf '%%s\\n' \"{f expr}\"")

@@ -23,6 +23,15 @@ let rec checkExpr (expr: Expr) : Expr =
       let lhs = checkExpr (lhs)
       let rhs = checkExpr (rhs)
       Expr.Sub(lhs, rhs)
+    | Expr.Eq (lhs, rhs) ->
+      let lhs = checkExpr (lhs)
+      let rhs = checkExpr (rhs)
+
+      if typ (lhs) <> typ (rhs) then
+        failCheck
+
+      Expr.Eq(lhs, rhs)
+
 
   if typ (expr) = Type.Unknown then
     failCheck

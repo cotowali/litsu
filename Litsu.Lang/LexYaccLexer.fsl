@@ -23,5 +23,6 @@ rule read = parse
 | int        { INT(lexeme lexbuf |> int64) }
 | '+'        { PLUS }
 | '-'        { MINUS }
+| '='        { EQ }
 | eof        { EOF }
 | _          { failwith ("ParseError" + LexBuffer<_>.LexemeString lexbuf) }

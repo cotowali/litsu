@@ -3,12 +3,14 @@ namespace Litsu.Lang
     module internal LexYaccParser =
         
         type token =
+            | EQ
             | PLUS
             | MINUS
             | INT of int64
             | EOF
         
         type tokenId =
+            | TOKEN_EQ
             | TOKEN_PLUS
             | TOKEN_MINUS
             | TOKEN_INT
