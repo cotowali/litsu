@@ -1,4 +1,4 @@
-namespace Litsu.Lang
+namespace Litsu
     
     module Type =
         

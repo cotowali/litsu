@@ -10,11 +10,11 @@
     <Compile Include="Type.fs" />
     <Compile Include="SyntaxTree.fs" />
     <FsYacc Include="LexYaccParser.fsy">
-      <OtherFlags>--module Litsu.Lang.LexYaccParser --internal</OtherFlags>
+      <OtherFlags>--module Litsu.LexYaccParser --internal</OtherFlags>
     </FsYacc>
     <Compile Include="LexYaccParser.fs" />
     <FsLex Include="LexYaccLexer.fsl">
-      <OtherFlags>--module Litsu.Lang.LexYaccLexer --internal --unicode</OtherFlags>
+      <OtherFlags>--module Litsu.LexYaccLexer --internal --unicode</OtherFlags>
     </FsLex>
     <Compile Include="LexYaccLexer.fs" />
     <Compile Include="Parser.fs" />

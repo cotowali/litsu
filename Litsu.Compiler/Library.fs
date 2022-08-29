@@ -8,9 +8,9 @@ module Litsu.Compiler
 
 open System.IO
 open System.Text
-open Litsu.Lang.Parser
-open Litsu.Lang.TypeChecker
-open Litsu.Lang.Codegen
+open Litsu.Parser
+open Litsu.TypeChecker
+open Litsu.Codegen
 
 let compile code =
   let out = StringBuilder()
