@@ -27,3 +27,4 @@ and typInfix (lhs: Expr) (rhs: Expr) =
   if lType = rType then lType else Type.Unknown
 
 type Node = Expr of Expr
+type Program = { Nodes: Node list }

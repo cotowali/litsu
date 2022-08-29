@@ -55,5 +55,5 @@ let main argv =
   if isRun then
     run code
   else
-    compile code |> printfn "%s"
+    compile code |> printf "%s"
     0

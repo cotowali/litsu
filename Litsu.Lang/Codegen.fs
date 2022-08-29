@@ -12,7 +12,7 @@ open Litsu.Lang.Type
 
 let unreachable = failwith "Unreachable"
 
-let codegen (writer: TextWriter) (node: Node) : unit =
+let private genNode (writer: TextWriter) (node: Node) : unit =
   match node with
   | Expr (expr) ->
     let rec f: Expr -> string =
@@ -36,4 +36,7 @@ let codegen (writer: TextWriter) (node: Node) : unit =
         let cond = sprintf "[ \"%s\" %s \"%s\" ]" (f lhs) op (f rhs) in
         sprintf "$(%s && printf 'true' || printf 'false')" cond
 
-    writer.Write($"printf '%%s\\n' \"{f expr}\"")
+    writer.Write($"printf '%%s\\n' \"{f expr}\"\n")
+
+let codegen (writer: TextWriter) (prog: Program) : unit =
+  List.map (genNode writer) prog.Nodes |> ignore

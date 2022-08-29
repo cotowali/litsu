@@ -16,12 +16,22 @@ open Litsu.Lang.SyntaxTree
 %left EQ
 %left PLUS MINUS
 
-%type <SyntaxTree.Node> program
+%type <SyntaxTree.Program> program
 
 %%
 
-program:
-  | expr EOF { Node.Expr $1 }
+program: nodes { { Nodes = $1 } }
+
+nodes:
+  | { [] }
+  | rev_nodes { List.rev $1 }
+
+rev_nodes:
+  | node { [$1] }
+  | rev_nodes node { $2 :: $1 }
+
+node:
+  | expr { Node.Expr $1 }
 
 expr:
   | expr PLUS  expr { Expr.Add($1, $3) }

@@ -21,6 +21,9 @@ namespace Litsu.Lang
         type nonTerminalId =
             | NONTERM__startprogram
             | NONTERM_program
+            | NONTERM_nodes
+            | NONTERM_rev_nodes
+            | NONTERM_node
             | NONTERM_expr
         
         val tagOfToken: t: token -> int
@@ -69,5 +72,5 @@ namespace Litsu.Lang
         
         val program:
           lexer: (FSharp.Text.Lexing.LexBuffer<'a> -> token)
-          -> lexbuf: FSharp.Text.Lexing.LexBuffer<'a> -> SyntaxTree.Node
+          -> lexbuf: FSharp.Text.Lexing.LexBuffer<'a> -> SyntaxTree.Program
 

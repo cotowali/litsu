@@ -38,6 +38,8 @@ let rec checkExpr (expr: Expr) : Expr =
 
   expr
 
-and check: Node -> Node =
+and checkNode: Node -> Node =
   function
   | Expr (expr) -> Node.Expr(checkExpr (expr))
+
+and check (p: Program) : Program = { Nodes = List.map checkNode p.Nodes }

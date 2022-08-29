@@ -9,6 +9,6 @@ module Litsu.Lang.Parser
 open FSharp.Text.Lexing
 open Litsu.Lang.SyntaxTree
 
-let parse text : SyntaxTree.Node =
+let parse text : SyntaxTree.Program =
   let lexbuf = LexBuffer<char>.FromString text
   LexYaccParser.program LexYaccLexer.read lexbuf

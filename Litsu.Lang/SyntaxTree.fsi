@@ -13,4 +13,7 @@ namespace Litsu.Lang
         val typInfix: lhs: Expr -> rhs: Expr -> Type.Type
         
         type Node = | Expr of Expr
+        
+        type Program =
+            { Nodes: Node list }
 
