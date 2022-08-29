@@ -1,0 +1,15 @@
+// For format details, see https://aka.ms/devcontainer.json.
+{
+	"build": {
+		"dockerfile": "Dockerfile"
+	},
+
+	// Configure tool-specific properties.
+	"customizations": {
+		"vscode": {	
+			"extensions": [
+				"Ionide.Ionide-fsharp"
+			]
+		}
+	}
+}
