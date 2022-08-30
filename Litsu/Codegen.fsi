@@ -4,6 +4,9 @@ namespace Litsu
         
         val unreachable: string
         
+        val private genExpr:
+          write: (string -> 'a) -> expr: SyntaxTree.Expr -> unit
+        
         val private genNode:
           write: (string -> 'a) -> node: SyntaxTree.Node -> unit
         

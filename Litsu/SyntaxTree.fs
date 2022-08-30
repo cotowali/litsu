@@ -1,8 +1,12 @@
-﻿// Copyright (c) 2022 zakuro <z@kuro.red>. All rights reserved.
-//
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+﻿(***********************************************************************)
+(*                                                                     *)
+(* Copyright (c) 2022 zakuro <z@kuro.red>. All rights reserved.        *)
+(*                                                                     *)
+(* This Source Code Form is subject to the terms of the Mozilla Public *)
+(* License, v. 2.0. If a copy of the MPL was not distributed with this *)
+(* file, You can obtain one at https://mozilla.org/MPL/2.0/.           *)
+(*                                                                     *)
+(***********************************************************************)
 
 module Litsu.SyntaxTree
 
@@ -22,8 +26,8 @@ let rec typ: (Expr -> Type) =
   | Expr.Eq (_) -> Type.Bool
 
 and typInfix (lhs: Expr) (rhs: Expr) =
-  let lType = typ (lhs)
-  let rType = typ (rhs)
+  let lType = typ (lhs) in
+  let rType = typ (rhs) in
   if lType = rType then lType else Type.Unknown
 
 type Node = Expr of Expr

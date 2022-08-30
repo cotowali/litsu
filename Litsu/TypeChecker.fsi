@@ -2,7 +2,7 @@ namespace Litsu
     
     module TypeChecker =
         
-        val failCheck: unit
+        val failCheck: SyntaxTree.Expr
         
         val checkExpr: expr: SyntaxTree.Expr -> SyntaxTree.Expr
         
