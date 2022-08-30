@@ -6,13 +6,12 @@
 
 module Litsu.Codegen
 
-open System.IO
 open Litsu.SyntaxTree
 open Litsu.Type
 
 let unreachable = failwith "Unreachable"
 
-let private genNode (writer: TextWriter) (node: Node) : unit =
+let private genNode (write: string -> 'a) (node: Node): unit =
   match node with
   | Expr (expr) ->
     let rec f: Expr -> string =
@@ -36,7 +35,7 @@ let private genNode (writer: TextWriter) (node: Node) : unit =
         let cond = sprintf "[ \"%s\" %s \"%s\" ]" (f lhs) op (f rhs) in
         sprintf "$(%s && printf 'true' || printf 'false')" cond
 
-    writer.Write($"printf '%%s\\n' \"{f expr}\"\n")
+    write($"printf '%%s\\n' \"{f expr}\"\n") |> ignore
 
-let codegen (writer: TextWriter) (prog: Program) : unit =
-  List.map (genNode writer) prog.Nodes |> ignore
+let codegen (write: string -> 'a) (prog: Program) : unit =
+  List.map (genNode write) prog.Nodes |> ignore

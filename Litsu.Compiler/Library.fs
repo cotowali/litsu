@@ -14,5 +14,5 @@ open Litsu.Codegen
 
 let compile code =
   let out = StringBuilder()
-  parse code |> check |> codegen (new StringWriter(out))
+  parse code |> check |> codegen out.Append
   out.ToString()

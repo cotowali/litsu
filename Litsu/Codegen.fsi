@@ -5,8 +5,7 @@ namespace Litsu
         val unreachable: string
         
         val private genNode:
-          writer: System.IO.TextWriter -> node: SyntaxTree.Node -> unit
+          write: (string -> 'a) -> node: SyntaxTree.Node -> unit
         
-        val codegen:
-          writer: System.IO.TextWriter -> prog: SyntaxTree.Program -> unit
+        val codegen: write: (string -> 'a) -> prog: SyntaxTree.Program -> unit
 
