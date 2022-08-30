@@ -8,40 +8,40 @@ open Litsu.Run
 open Litsu.Testing.Settings
 
 type RunResult =
-  { ExitCode: int
-    Stdout: string
-    Stderr: string }
+    { ExitCode: int
+      Stdout: string
+      Stderr: string }
 
 let runCode code : string =
-  use stdin = new MemoryStream()
-  use out = new MemoryStream()
+    use stdin = new MemoryStream()
+    use out = new MemoryStream()
 
-  let exitCode = Runner().Run(code, stdin, out, out)
+    let exitCode = Runner().Run(code, stdin, out, out)
 
-  out.Seek(0, SeekOrigin.Begin) |> ignore
-  using (new StreamReader(out)) (fun r -> r.ReadToEnd())
+    out.Seek(0, SeekOrigin.Begin) |> ignore
+    using (new StreamReader(out)) (fun r -> r.ReadToEnd())
 
 [<Tests>]
 let tests =
-  let settings = Settings()
+    let settings = Settings()
 
-  let testsDir = Path.Combine(settings.SolutionDirectory, "tests")
+    let testsDir = Path.Combine(settings.SolutionDirectory, "tests")
 
-  let testFiles =
-    let searchOption = SearchOption.AllDirectories
-    Directory.GetFiles(testsDir, "*.lit", searchOption) |> Array.toList
+    let testFiles =
+        let searchOption = SearchOption.AllDirectories
+        Directory.GetFiles(testsDir, "*.lit", searchOption) |> Array.toList
 
-  List.map
-    (fun (testFilePath: string) ->
-      let name = Path.GetFileName(testFilePath)
-      let code = using (new StreamReader(testFilePath)) (fun r -> r.ReadToEnd())
+    List.map
+        (fun (testFilePath: string) ->
+            let name = Path.GetFileName(testFilePath)
+            let code = using (new StreamReader(testFilePath)) (fun r -> r.ReadToEnd())
 
-      testTask name {
-        if name.EndsWith("fail.lit") then
-          let message = sprintf "`%s` should be compile error" name
-          Expect.throws (fun () -> runCode code |> ignore) message
-        else
-          do! Verifier.Verify(name, runCode code, settings, "tests")
-      })
-    testFiles
-  |> testList "tests"
+            testTask name {
+                if name.EndsWith("fail.lit") then
+                    let message = sprintf "`%s` should be compile error" name
+                    Expect.throws (fun () -> runCode code |> ignore) message
+                else
+                    do! Verifier.Verify(name, runCode code, settings, "tests")
+            })
+        testFiles
+    |> testList "tests"

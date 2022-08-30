@@ -12,15 +12,15 @@ open VerifyTests
 open System.IO
 
 type Settings([<CallerFilePath; Optional; DefaultParameterValue("")>] path: string) as this =
-  inherit VerifySettings()
-  let dir = Path.GetDirectoryName(path)
-  let mutable solutionDirectory = dir
+    inherit VerifySettings()
+    let dir = Path.GetDirectoryName(path)
+    let mutable solutionDirectory = dir
 
-  do
-    while Directory.GetFiles(solutionDirectory, "*.sln").Length = 0 do
-      solutionDirectory <- Directory.GetParent(solutionDirectory).FullName
+    do
+        while Directory.GetFiles(solutionDirectory, "*.sln").Length = 0 do
+            solutionDirectory <- Directory.GetParent(solutionDirectory).FullName
 
-  do this.UseDirectory(this.OutputPath)
+    do this.UseDirectory(this.OutputPath)
 
-  member this.SolutionDirectory = solutionDirectory
-  member this.OutputPath = Path.Combine(this.SolutionDirectory, "verified_output")
+    member this.SolutionDirectory = solutionDirectory
+    member this.OutputPath = Path.Combine(this.SolutionDirectory, "verified_output")

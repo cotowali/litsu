@@ -14,36 +14,40 @@ open CliWrap
 open Litsu.Compiler
 
 type Runner() =
-  member _this.Run(code: string, ?stdin: Stream, ?stdout: Stream, ?stderr: Stream) : int =
+    member _this.Run(code: string, ?stdin: Stream, ?stdout: Stream, ?stderr: Stream) : int =
 
-    let stdin = defaultArg stdin (Console.OpenStandardInput())
-    let stdout = defaultArg stdout (Console.OpenStandardOutput())
-    let stderr = defaultArg stderr (Console.OpenStandardError())
+        let stdin = defaultArg stdin (Console.OpenStandardInput())
+        let stdout = defaultArg stdout (Console.OpenStandardOutput())
+        let stderr = defaultArg stderr (Console.OpenStandardError())
 
-    let filename = $"litsu_{DateTime.UtcNow.Ticks}.sh"
-    let outPath = Path.Join(Path.GetTempPath(), filename)
+        let filename = $"litsu_{DateTime.UtcNow.Ticks}.sh"
+        let outPath = Path.Join(Path.GetTempPath(), filename)
 
-    use file =
-      new StreamWriter(
-        outPath,
-        UTF8Encoding(false),
-        FileStreamOptions(Access = FileAccess.ReadWrite, Mode = FileMode.Create, Options = FileOptions.DeleteOnClose)
-      )
+        use file =
+            new StreamWriter(
+                outPath,
+                UTF8Encoding(false),
+                FileStreamOptions(
+                    Access = FileAccess.ReadWrite,
+                    Mode = FileMode.Create,
+                    Options = FileOptions.DeleteOnClose
+                )
+            )
 
-    compile code |> file.Write
-    file.Flush()
+        compile code |> file.Write
+        file.Flush()
 
-    let cmd = Cli.Wrap("sh").WithArguments(outPath)
-    let cmd = cmd.WithValidation(CommandResultValidation.None)
-    let stdinPipe = PipeSource.FromStream(stdin)
-    let cmd = cmd.WithStandardInputPipe(stdinPipe)
-    let stdoutPipe = PipeTarget.ToStream(stdout)
-    let cmd = cmd.WithStandardOutputPipe(stdoutPipe)
-    let stderrPipe = PipeTarget.ToStream(stderr)
-    let cmd = cmd.WithStandardErrorPipe(stderrPipe)
+        let cmd = Cli.Wrap("sh").WithArguments(outPath)
+        let cmd = cmd.WithValidation(CommandResultValidation.None)
+        let stdinPipe = PipeSource.FromStream(stdin)
+        let cmd = cmd.WithStandardInputPipe(stdinPipe)
+        let stdoutPipe = PipeTarget.ToStream(stdout)
+        let cmd = cmd.WithStandardOutputPipe(stdoutPipe)
+        let stderrPipe = PipeTarget.ToStream(stderr)
+        let cmd = cmd.WithStandardErrorPipe(stderrPipe)
 
-    let res = (cmd.ExecuteAsync().Task.Result)
+        let res = (cmd.ExecuteAsync().Task.Result)
 
-    res.ExitCode
+        res.ExitCode
 
 let run code = Runner().Run code
