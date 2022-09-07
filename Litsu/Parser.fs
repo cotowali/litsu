@@ -14,4 +14,9 @@ open FSharp.Text.Lexing
 open Litsu.SyntaxTree
 
 let parse text : SyntaxTree.Program =
-  let lexbuf = LexBuffer<char>.FromString text in LexYaccParser.program LexYaccLexer.read lexbuf
+    let lexbuf = LexBuffer<char>.FromString text
+
+    try
+        LexYaccParser.program LexYaccLexer.read lexbuf
+    with e ->
+        failwith (sprintf "ParseError at Line:%d Column:%d" lexbuf.StartPos.Line lexbuf.StartPos.Column)
