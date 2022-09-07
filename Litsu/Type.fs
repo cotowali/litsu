@@ -11,6 +11,6 @@
 module Litsu.Type
 
 type Type =
-  | Unknown
-  | Int
-  | Bool
+    | Unknown
+    | Int
+    | Bool
