@@ -42,11 +42,11 @@ node:
   | expr { Node.Expr $1 }
 
 expr:
-  | expr PLUS  expr { Expr.Add($1, $3, Var(ref None)) }
-  | expr MINUS expr { Expr.Sub($1, $3, Var(ref None)) }
+  | expr PLUS  expr { Expr.Add($1, $3, newType()) }
+  | expr MINUS expr { Expr.Sub($1, $3, newType()) }
   | expr EQ    expr { Expr.Eq($1, $3) }
   | LET IDENT EQ expr IN expr
     %prec prec_rec
-    { Expr.Let($2, Var(ref None), $4, $6) }
-  | IDENT { Expr.Var($1, Var(ref None)) }
+    { Expr.Let($2, newType(), $4, $6) }
+  | IDENT { Expr.Var($1, newType()) }
   | INT   { Expr.Int($1) }

@@ -7,4 +7,6 @@ namespace Litsu
             | Int
             | Bool
             | Var of Type option ref
+        
+        val newType: unit -> Type
 

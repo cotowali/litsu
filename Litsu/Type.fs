@@ -15,3 +15,5 @@ type Type =
     | Int
     | Bool
     | Var of Type option ref
+
+let newType() = Var(ref None)
