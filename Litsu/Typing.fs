@@ -58,8 +58,8 @@ let rec derefType: Type -> Type =
 let rec derefExpr (expr: Expr) : Expr =
     match expr with
     | Expr.Int (n) -> Expr.Int(n)
-    | Expr.Add (lhs, rhs) -> Expr.Add(derefExpr lhs, derefExpr rhs)
-    | Expr.Sub (lhs, rhs) -> Expr.Sub(derefExpr lhs, derefExpr rhs)
+    | Expr.Add (lhs, rhs, t) -> Expr.Add(derefExpr lhs, derefExpr rhs, derefType t)
+    | Expr.Sub (lhs, rhs, t) -> Expr.Sub(derefExpr lhs, derefExpr rhs, derefType t)
     | Expr.Eq (lhs, rhs) -> Expr.Eq(derefExpr lhs, derefExpr rhs)
     | Expr.Let (name, typ, e1, e2) -> Let(name, derefType typ, derefExpr e1, derefExpr e2)
     | Expr.Var (name, typ) -> Expr.Var(name, derefType typ)
@@ -73,12 +73,13 @@ let deref (p: Program) : Program = { Nodes = List.map derefNode p.Nodes }
 let rec infer (env: TypeEnv) (e: Expr) : Type =
     match e with
     | Expr.Int (_) -> Type.Int
-    | Expr.Add (lhs, rhs)
-    | Expr.Sub (lhs, rhs) ->
+    | Expr.Add (lhs, rhs, t)
+    | Expr.Sub (lhs, rhs, t) ->
         let t1 = (infer env lhs)
         let t2 = (infer env rhs)
         unify t1 t2
-        t1
+        unify t t1
+        t
     | Expr.Eq (lhs, rhs) ->
         unify (infer env lhs) (infer env rhs)
         Type.Bool

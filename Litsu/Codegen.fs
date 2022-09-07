@@ -25,12 +25,12 @@ let rec private genExpr (ctx: Context) (write: string -> unit) (expr: Expr) : un
     let rec f: Expr -> string =
         function
         | Expr.Int (n) -> sprintf "%d" n
-        | Expr.Add (lhs, rhs) ->
-            (match typInfix lhs rhs with
+        | Expr.Add (lhs, rhs, t) ->
+            (match t with
              | Type.Int -> sprintf "$(( %s + %s ))" (f lhs) (f rhs)
              | _ -> unreachable ())
-        | Expr.Sub (lhs, rhs) ->
-            (match typInfix lhs rhs with
+        | Expr.Sub (lhs, rhs, t) ->
+            (match t with
              | Type.Int -> sprintf "$(( %s - %s ))" (f lhs) (f rhs)
              | _ -> unreachable ())
         | Expr.Eq (lhs, rhs) ->
