@@ -9,10 +9,10 @@ module Litsu.Compiler
 open System.IO
 open System.Text
 open Litsu.Parser
-open Litsu.TypeChecker
+open Litsu.Typing
 open Litsu.Codegen
 
 let compile code =
     let out = StringBuilder()
-    parse code |> check |> codegen out.Append
+    parse code |> check |> codegen (out.Append >> ignore)
     out.ToString()

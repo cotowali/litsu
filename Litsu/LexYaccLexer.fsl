@@ -13,16 +13,24 @@ let newline (lexbuf: LexBuffer<_>) =
 let whitespace = [' ' '\t']
 let newline = ('\n' | '\r' '\n')
 
+
 let digit = ['0'-'9']
 
 let int = digit+
 
+
+let identStart = ['A'-'Z' 'a'-'z' '_']
+let ident = identStart (identStart | digit)*
+
 rule read = parse
 | whitespace { read lexbuf }
 | newline    { newline lexbuf; read lexbuf }
+| "let"      { LET }
+| "in"       { IN }
 | int        { INT(lexeme lexbuf |> int64) }
 | '+'        { PLUS }
 | '-'        { MINUS }
 | '='        { EQ }
+| ident      { IDENT(lexeme lexbuf) }
 | eof        { EOF }
 | _          { failwith ("ParseError" + LexBuffer<_>.LexemeString lexbuf) }

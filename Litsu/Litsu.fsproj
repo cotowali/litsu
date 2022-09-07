@@ -18,12 +18,14 @@
     </FsLex>
     <Compile Include="LexYaccLexer.fs" />
     <Compile Include="Parser.fs" />
-    <Compile Include="TypeChecker.fs" />
+    <Compile Include="TypeEnv.fs" />
+    <Compile Include="Typing.fs" />
     <Compile Include="Codegen.fs" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="FsLexYacc" Version="10.2.0" />
+    <PackageReference Include="Fsharp.Compatibility.Ocaml" Version="0.1.14" />
   </ItemGroup>
 
 </Project>

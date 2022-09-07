@@ -6,4 +6,5 @@ namespace Litsu
             | Unknown
             | Int
             | Bool
+            | Var of Type option ref
 

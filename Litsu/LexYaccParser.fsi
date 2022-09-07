@@ -2,10 +2,16 @@ namespace Litsu
     
     module internal LexYaccParser =
         
+        val parse_error_rich:
+          (FSharp.Text.Parsing.ParseErrorContext<'a> -> 'b) option
+        
         type token =
             | EQ
             | PLUS
             | MINUS
+            | LET
+            | IN
+            | IDENT of string
             | INT of int64
             | EOF
         
@@ -13,6 +19,9 @@ namespace Litsu
             | TOKEN_EQ
             | TOKEN_PLUS
             | TOKEN_MINUS
+            | TOKEN_LET
+            | TOKEN_IN
+            | TOKEN_IDENT
             | TOKEN_INT
             | TOKEN_EOF
             | TOKEN_end_of_input

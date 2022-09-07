@@ -2,13 +2,22 @@ namespace Litsu
     
     module Codegen =
         
-        val unreachable: string
+        val unreachable: unit -> 'a
+        
+        type Context =
+            { IndentN: int }
+        
+        val private newContext: unit -> Context
+        
+        val private varname: name: string -> string
         
         val private genExpr:
-          write: (string -> 'a) -> expr: SyntaxTree.Expr -> unit
+          ctx: Context -> write: (string -> unit) -> expr: SyntaxTree.Expr
+            -> unit
         
         val private genNode:
-          write: (string -> 'a) -> node: SyntaxTree.Node -> unit
+          ctx: Context -> write: (string -> unit) -> node: SyntaxTree.Node
+            -> unit
         
-        val codegen: write: (string -> 'a) -> prog: SyntaxTree.Program -> unit
+        val codegen: write: (string -> unit) -> prog: SyntaxTree.Program -> unit
 
