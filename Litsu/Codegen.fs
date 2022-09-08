@@ -25,23 +25,23 @@ let rec private genExpr (ctx: Context) (write: string -> unit) (expr: Expr) : un
     let rec f: Expr -> string =
         function
         | Expr.Int (n) -> sprintf "%d" n
-        | Expr.Add (lhs, rhs, t) ->
-            (match t with
-             | Type.Int -> sprintf "$(( %s + %s ))" (f lhs) (f rhs)
-             | _ -> unreachable ())
-        | Expr.Sub (lhs, rhs, t) ->
-            (match t with
-             | Type.Int -> sprintf "$(( %s - %s ))" (f lhs) (f rhs)
-             | _ -> unreachable ())
-        | Expr.Eq (lhs, rhs) ->
-            let op =
-                (match typ lhs with
-                 | Type.Int -> "-eq"
-                 | Type.Bool -> "=e"
-                 | _ -> unreachable ())
+        | Expr.Infix (op, lhs, rhs, t) ->
+            (match op with
+             | "+"
+             | "-" ->
+                 (match t with
+                  | Type.Int -> sprintf "$(( %s %s %s ))" (f lhs) op (f rhs)
+                  | _ -> unreachable ())
+             | "=" ->
+                 let op =
+                     (match t with
+                      | Type.Int -> "-eq"
+                      | Type.Bool -> "="
+                      | _ -> unreachable ())
 
-            let cond = sprintf "[ \"%s\" %s \"%s\" ]" (f lhs) op (f rhs) in
-            sprintf "$(%s && printf 'true' || printf 'false')" cond
+                 let cond = sprintf "[ \"%s\" %s \"%s\" ]" (f lhs) op (f rhs) in
+                 sprintf "$(%s && printf 'true' || printf 'false')" cond
+             | _ -> unreachable ())
         | Expr.Let (name, typ, init, body) ->
             let mutable out = sprintf "$(%s=\"%s\"\n" (varname name) (f init)
             let writeInner s = out <- out + s

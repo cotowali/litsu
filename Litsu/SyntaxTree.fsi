@@ -4,9 +4,7 @@ namespace Litsu
         
         type Expr =
             | Int of int64
-            | Add of Expr * Expr * Type.Type
-            | Sub of Expr * Expr * Type.Type
-            | Eq of Expr * Expr
+            | Infix of string * Expr * Expr * Type.Type
             | Let of string * Type.Type * Expr * Expr
             | Var of string * Type.Type
         

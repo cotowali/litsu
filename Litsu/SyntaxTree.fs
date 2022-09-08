@@ -14,18 +14,14 @@ open Litsu.Type
 
 type Expr =
     | Int of int64
-    | Add of Expr * Expr * Type
-    | Sub of Expr * Expr * Type
-    | Eq of Expr * Expr
+    | Infix of string * Expr * Expr * Type // op lhs rhs typ
     | Let of string * Type * Expr * Expr
     | Var of string * Type
 
 let rec typ: (Expr -> Type) =
     function
     | Expr.Int (_) -> Type.Int
-    | Expr.Add (_, _, t)
-    | Expr.Sub (_, _, t) -> t
-    | Expr.Eq (_) -> Type.Bool
+    | Expr.Infix (_, _, _, t) -> t
     | Expr.Let (_, t, _, _) -> t
     | Expr.Var (_, t) -> t
 
