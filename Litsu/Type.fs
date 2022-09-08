@@ -16,4 +16,4 @@ type Type =
     | Bool
     | Var of Type option ref
 
-let newType() = Var(ref None)
+let newType () = Var(ref None)
