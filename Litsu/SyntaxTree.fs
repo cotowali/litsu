@@ -14,6 +14,7 @@ open Litsu.Type
 
 type Expr =
     | Int of int64
+    | String of string
     | Infix of string * Expr * Expr * Type // op lhs rhs typ
     | Let of string * Type * Expr * Expr
     | Var of string * Type
@@ -21,6 +22,7 @@ type Expr =
 let rec typ: (Expr -> Type) =
     function
     | Expr.Int (_) -> Type.Int
+    | Expr.String (_) -> Type.String
     | Expr.Infix (_, _, _, t) -> t
     | Expr.Let (_, t, _, _) -> t
     | Expr.Var (_, t) -> t

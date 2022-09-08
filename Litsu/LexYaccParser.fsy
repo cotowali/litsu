@@ -12,6 +12,7 @@ let parse_error_rich = Some(fun (ctx: ParseErrorContext<_>) -> failwith "xxx")
 
 %token EOF
 %token <int64>  INT
+%token <string> STRING
 %token <string> IDENT
 %token LET IN
 
@@ -48,5 +49,6 @@ expr:
   | LET IDENT EQ expr IN expr
     %prec prec_rec
     { Expr.Let($2, newType(), $4, $6) }
-  | IDENT { Expr.Var($1, newType()) }
-  | INT   { Expr.Int($1) }
+  | IDENT  { Expr.Var($1, newType()) }
+  | INT    { Expr.Int($1) }
+  | STRING { Expr.String($1) }

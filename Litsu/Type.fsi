@@ -4,6 +4,7 @@ namespace Litsu
         
         type Type =
             | Unknown
+            | String
             | Int
             | Bool
             | Var of Type option ref

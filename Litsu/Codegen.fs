@@ -10,6 +10,7 @@
 
 module Litsu.Codegen
 
+open FSharp.Compatibility.OCaml.Pervasives
 open Litsu.SyntaxTree
 open Litsu.Type
 
@@ -25,6 +26,13 @@ let rec private genExpr (ctx: Context) (write: string -> unit) (expr: Expr) : un
     let rec f: Expr -> string =
         function
         | Expr.Int (n) -> sprintf "%d" n
+        | Expr.String(s) ->
+          String.collect (function
+            | '"' -> "\\\""
+            | '\\' -> "\\\\"
+            | '$' -> "\\$"
+            | c -> sprintf "%c" c
+          ) s
         | Expr.Infix (op, lhs, rhs, t) ->
             (match op with
              | "+"

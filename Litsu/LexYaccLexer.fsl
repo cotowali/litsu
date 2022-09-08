@@ -31,6 +31,14 @@ rule read = parse
 | '+'        { PLUS }
 | '-'        { MINUS }
 | '='        { EQ }
+| '"'        { read_string "" lexbuf }
 | ident      { IDENT(lexeme lexbuf) }
 | eof        { EOF }
 | _          { failwith ("ParseError" + LexBuffer<_>.LexemeString lexbuf) }
+
+and read_string buf = parse
+| "\\\"" { read_string (buf + "\"") lexbuf }
+| "\\\\" { read_string (buf + "\\") lexbuf }
+| '"' { STRING(buf) }
+| eof { failwith ("ParseError: string literal is not terminated") }
+| _ { read_string (buf + (lexeme lexbuf)) lexbuf }

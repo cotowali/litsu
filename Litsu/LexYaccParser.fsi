@@ -12,6 +12,7 @@ namespace Litsu
             | LET
             | IN
             | IDENT of string
+            | STRING of string
             | INT of int64
             | EOF
         
@@ -22,6 +23,7 @@ namespace Litsu
             | TOKEN_LET
             | TOKEN_IN
             | TOKEN_IDENT
+            | TOKEN_STRING
             | TOKEN_INT
             | TOKEN_EOF
             | TOKEN_end_of_input

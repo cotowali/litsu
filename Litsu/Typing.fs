@@ -58,6 +58,7 @@ let rec derefType: Type -> Type =
 let rec derefExpr (expr: Expr) : Expr =
     match expr with
     | Expr.Int (n) -> Expr.Int(n)
+    | Expr.String (s) -> Expr.String(s)
     | Expr.Infix (op, lhs, rhs, t) -> Expr.Infix(op, derefExpr lhs, derefExpr rhs, derefType t)
     | Expr.Let (name, typ, e1, e2) -> Let(name, derefType typ, derefExpr e1, derefExpr e2)
     | Expr.Var (name, typ) -> Expr.Var(name, derefType typ)
@@ -71,6 +72,7 @@ let deref (p: Program) : Program = { Nodes = List.map derefNode p.Nodes }
 let rec infer (env: TypeEnv) (e: Expr) : Type =
     match e with
     | Expr.Int (_) -> Type.Int
+    | Expr.String (_) -> Type.String
     | Expr.Infix (op, lhs, rhs, t) ->
         let t1 = (infer env lhs)
         let t2 = (infer env rhs)
@@ -81,7 +83,6 @@ let rec infer (env: TypeEnv) (e: Expr) : Type =
         | "+"
         | "-" -> unify t t1
         | _ -> failwith (sprintf "Unknown operator `%s`" op)
-
         t
     | Expr.Let (name, t, e1, e2) ->
         unify t (infer env e1)
