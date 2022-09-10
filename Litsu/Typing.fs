@@ -56,12 +56,14 @@ let rec derefType: Type -> Type =
     | t -> t
 
 let rec derefExpr (expr: Expr) : Expr =
+    let de = derefExpr in
+    let dt = derefType in
     match expr with
     | Expr.Int (n) -> Expr.Int(n)
     | Expr.String (s) -> Expr.String(s)
-    | Expr.Infix (op, lhs, rhs, t) -> Expr.Infix(op, derefExpr lhs, derefExpr rhs, derefType t)
-    | Expr.Let (name, typ, e1, e2) -> Let(name, derefType typ, derefExpr e1, derefExpr e2)
-    | Expr.Var (name, typ) -> Expr.Var(name, derefType typ)
+    | Expr.Infix (op, lhs, rhs, t) -> Expr.Infix(op, de lhs, de rhs, dt t)
+    | Expr.Let (name, typ, e1, e2) -> Let(name, dt typ, de e1, de e2)
+    | Expr.Var (name, typ) -> Expr.Var(name, dt typ)
 
 and derefNode: Node -> Node =
     function
