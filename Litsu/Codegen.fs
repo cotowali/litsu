@@ -22,17 +22,20 @@ let private newContext () : Context = { IndentN = 0 }
 
 let private varname (name: string) : string = sprintf "LITSU_%s" name
 
+let private sTrue, sFalse = ("true", "false")
+
 let rec private genExpr (ctx: Context) (write: string -> unit) (expr: Expr) : unit =
     let rec f: Expr -> string =
         function
         | Expr.Int (n) -> sprintf "%d" n
-        | Expr.String(s) ->
-          String.collect (function
-            | '"' -> "\\\""
-            | '\\' -> "\\\\"
-            | '$' -> "\\$"
-            | c -> sprintf "%c" c
-          ) s
+        | Expr.String (s) ->
+            String.collect
+                (function
+                | '"' -> "\\\""
+                | '\\' -> "\\\\"
+                | '$' -> "\\$"
+                | c -> sprintf "%c" c)
+                s
         | Expr.Infix (op, lhs, rhs, t) ->
             (match op with
              | "+"
@@ -48,8 +51,17 @@ let rec private genExpr (ctx: Context) (write: string -> unit) (expr: Expr) : un
                       | _ -> unreachable ())
 
                  let cond = sprintf "[ \"%s\" %s \"%s\" ]" (f lhs) op (f rhs) in
-                 sprintf "$(%s && printf 'true' || printf 'false')" cond
+                 sprintf "$(%s && printf '%s' || printf '%s')" cond sTrue sFalse
              | _ -> unreachable ())
+        | Expr.If (cond, e1, e2, _) ->
+            let mutable out = sprintf "$(if [ \"%s\" = '%s' ]\n" (f cond) sTrue
+            let writeInner s = out <- out + s
+            writeInner "then\n"
+            genExpr { ctx with IndentN = ctx.IndentN + 1 } writeInner e1
+            writeInner "else\n"
+            genExpr { ctx with IndentN = ctx.IndentN + 1 } writeInner e2
+            writeInner "fi)"
+            out
         | Expr.Let (name, typ, init, body) ->
             let mutable out = sprintf "$(%s=\"%s\"\n" (varname name) (f init)
             let writeInner s = out <- out + s

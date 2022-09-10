@@ -8,6 +8,7 @@ namespace Litsu
             | Infix of string * Expr * Expr * Type.Type
             | Let of string * Type.Type * Expr * Expr
             | Var of string * Type.Type
+            | If of Expr * Expr * Expr * Type.Type
         
         val typ: _arg1: Expr -> Type.Type
         

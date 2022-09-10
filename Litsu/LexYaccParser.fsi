@@ -9,6 +9,9 @@ namespace Litsu
             | EQ
             | PLUS
             | MINUS
+            | IF
+            | THEN
+            | ELSE
             | LET
             | IN
             | IDENT of string
@@ -20,6 +23,9 @@ namespace Litsu
             | TOKEN_EQ
             | TOKEN_PLUS
             | TOKEN_MINUS
+            | TOKEN_IF
+            | TOKEN_THEN
+            | TOKEN_ELSE
             | TOKEN_LET
             | TOKEN_IN
             | TOKEN_IDENT

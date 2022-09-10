@@ -27,7 +27,8 @@ let rec occur r1 =
 let rec unify (t1: Type) (t2: Type) =
     match t1, t2 with
     | Type.Int, Type.Int
-    | Type.Bool, Type.Bool -> ()
+    | Type.Bool, Type.Bool
+    | Type.String, Type.String -> ()
     | Type.Var (r1), Type.Var (r2) when r1 == r2 -> ()
     | Type.Var ({ contents = Some (t1') }), _ -> unify t1' t2
     | _, Type.Var ({ contents = Some (t2') }) -> unify t1 t2'
@@ -58,10 +59,12 @@ let rec derefType: Type -> Type =
 let rec derefExpr (expr: Expr) : Expr =
     let de = derefExpr in
     let dt = derefType in
+
     match expr with
     | Expr.Int (n) -> Expr.Int(n)
     | Expr.String (s) -> Expr.String(s)
     | Expr.Infix (op, lhs, rhs, t) -> Expr.Infix(op, de lhs, de rhs, dt t)
+    | Expr.If (cond, e1, e2, t) -> Expr.If(de cond, de e1, de e2, dt t)
     | Expr.Let (name, typ, e1, e2) -> Let(name, dt typ, de e1, de e2)
     | Expr.Var (name, typ) -> Expr.Var(name, dt typ)
 
@@ -85,6 +88,14 @@ let rec infer (env: TypeEnv) (e: Expr) : Type =
         | "+"
         | "-" -> unify t t1
         | _ -> failwith (sprintf "Unknown operator `%s`" op)
+
+        t
+    | Expr.If (cond, e1, e2, t) ->
+        unify Type.Bool (infer env cond)
+        let t1 = (infer env e1) in
+        let t2 = (infer env e2) in
+        unify t1 t2
+        unify t t1
         t
     | Expr.Let (name, t, e1, e2) ->
         unify t (infer env e1)

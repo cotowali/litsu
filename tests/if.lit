@@ -1,0 +1,19 @@
+if 1 = 1 then
+  1
+else
+  0
+if 1 = 0 then
+  1
+else
+  0
+let i = 0 in
+if i = i then
+  if i = 0 then
+    if i = 1 then
+      "i = i, i = 0, i = 1"
+    else
+      "i = i, i = 0, not i = 1"
+  else
+    "i = i, not i = 0"
+else
+  "not i = i"

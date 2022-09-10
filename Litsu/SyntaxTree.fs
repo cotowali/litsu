@@ -18,12 +18,14 @@ type Expr =
     | Infix of string * Expr * Expr * Type // op lhs rhs typ
     | Let of string * Type * Expr * Expr
     | Var of string * Type
+    | If of Expr * Expr * Expr * Type // cond trueBody falseBody typ
 
 let rec typ: (Expr -> Type) =
     function
     | Expr.Int (_) -> Type.Int
     | Expr.String (_) -> Type.String
     | Expr.Infix (_, _, _, t) -> t
+    | Expr.If (_, _, _, t) -> t
     | Expr.Let (_, t, _, _) -> t
     | Expr.Var (_, t) -> t
 

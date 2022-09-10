@@ -11,6 +11,10 @@ namespace Litsu
         
         val private varname: name: string -> string
         
+        val private sTrue: string
+        
+        val sFalse: string
+        
         val private genExpr:
           ctx: Context -> write: (string -> unit) -> expr: SyntaxTree.Expr
             -> unit

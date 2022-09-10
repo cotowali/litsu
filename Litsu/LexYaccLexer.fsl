@@ -27,6 +27,9 @@ rule read = parse
 | newline    { newline lexbuf; read lexbuf }
 | "let"      { LET }
 | "in"       { IN }
+| "if"       { IF }
+| "then"     { THEN }
+| "else"     { ELSE }
 | int        { INT(lexeme lexbuf |> int64) }
 | '+'        { PLUS }
 | '-'        { MINUS }

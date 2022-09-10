@@ -15,6 +15,7 @@ let parse_error_rich = Some(fun (ctx: ParseErrorContext<_>) -> failwith "xxx")
 %token <string> STRING
 %token <string> IDENT
 %token LET IN
+%token IF THEN ELSE
 
 %token PLUS MINUS
 %token EQ
@@ -22,6 +23,7 @@ let parse_error_rich = Some(fun (ctx: ParseErrorContext<_>) -> failwith "xxx")
 // order by operator precedence
 %nonassoc IN
 %right prec_let
+%right prec_if
 %left EQ
 %left PLUS MINUS
 
@@ -49,6 +51,9 @@ expr:
   | LET IDENT EQ expr IN expr
     %prec prec_rec
     { Expr.Let($2, newType(), $4, $6) }
+  | IF expr THEN expr ELSE expr
+    %prec prec_if
+    { Expr.If($2, $4, $6, newType()) }
   | IDENT  { Expr.Var($1, newType()) }
   | INT    { Expr.Int($1) }
   | STRING { Expr.String($1) }
