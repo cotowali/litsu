@@ -41,7 +41,7 @@ let rec private genExpr (ctx: Context) (write: string -> unit) (expr: Expr) : un
              | "+"
              | "-" ->
                  (match t with
-                  | Type.Int -> sprintf "$(( %s %s %s ))" (f lhs) op (f rhs)
+                  | Type.Int -> sprintf "$(( ( %s ) %s ( %s ) ))" (f lhs) op (f rhs)
                   | _ -> unreachable ())
              | "=" ->
                  let op =

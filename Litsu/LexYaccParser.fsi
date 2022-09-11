@@ -9,6 +9,8 @@ namespace Litsu
             | EQ
             | PLUS
             | MINUS
+            | LPAREN
+            | RPAREN
             | IF
             | THEN
             | ELSE
@@ -23,6 +25,8 @@ namespace Litsu
             | TOKEN_EQ
             | TOKEN_PLUS
             | TOKEN_MINUS
+            | TOKEN_LPAREN
+            | TOKEN_RPAREN
             | TOKEN_IF
             | TOKEN_THEN
             | TOKEN_ELSE
@@ -41,6 +45,7 @@ namespace Litsu
             | NONTERM_nodes
             | NONTERM_rev_nodes
             | NONTERM_node
+            | NONTERM_simple_expr
             | NONTERM_expr
         
         val tagOfToken: t: token -> int
