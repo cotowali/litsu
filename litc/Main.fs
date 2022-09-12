@@ -7,18 +7,21 @@
 open Argu
 open System
 open System.IO
+open Litsu.Parser
 open Litsu.Compiler
 open Litsu.Run
 
 type MainArgs =
     | [<MainCommand>] File of file: string
     | [<CliPrefix(CliPrefix.None)>] Run
+    | [<CliPrefix(CliPrefix.None)>] Ast
 
     interface IArgParserTemplate with
         member this.Usage =
             match this with
             | File _ -> "input file"
             | Run _ -> "run after compile"
+            | Ast _ -> "print ast"
 
 [<EntryPoint>]
 let main argv =
@@ -50,9 +53,13 @@ let main argv =
 
         file.ReadToEnd()
 
-    let isRun = List.contains MainArgs.Run (results.GetResults(MainArgs.Run))
+    let isRun = results.TryGetResult(MainArgs.Run) <> None
+    let isAst = results.TryGetResult(MainArgs.Ast) <> None
 
-    if isRun then
+    if isAst then
+        parse code |> printfn "%A"
+        0
+    else if isRun then
         run code
     else
         compile code |> printf "%s"
