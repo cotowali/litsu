@@ -21,6 +21,7 @@
     <Compile Include="TypeEnv.fs" />
     <Compile Include="Typing.fs" />
     <Compile Include="Codegen.fs" />
+    <Compile Include="Compiler.fs" />
   </ItemGroup>
 
   <ItemGroup>

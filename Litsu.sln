@@ -11,8 +11,6 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Litsu.Testing", "Litsu.Test
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Litsu.Run", "Litsu.Run\Litsu.Run.fsproj", "{03F0F8D6-232E-4DFF-900E-332FD8D0A2A0}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Litsu.Compiler", "Litsu.Compiler\Litsu.Compiler.fsproj", "{27E77DB5-0F68-41F9-8334-2607C1A9617D}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,10 +33,6 @@ Global
 		{03F0F8D6-232E-4DFF-900E-332FD8D0A2A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{03F0F8D6-232E-4DFF-900E-332FD8D0A2A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{03F0F8D6-232E-4DFF-900E-332FD8D0A2A0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{27E77DB5-0F68-41F9-8334-2607C1A9617D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{27E77DB5-0F68-41F9-8334-2607C1A9617D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{27E77DB5-0F68-41F9-8334-2607C1A9617D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{27E77DB5-0F68-41F9-8334-2607C1A9617D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
