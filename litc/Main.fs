@@ -12,7 +12,7 @@ open Litsu.Run
 
 type MainArgs =
     | [<MainCommand>] File of file: string
-    | Run
+    | [<CliPrefix(CliPrefix.None)>] Run
 
     interface IArgParserTemplate with
         member this.Usage =
