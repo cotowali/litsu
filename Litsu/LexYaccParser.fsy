@@ -57,7 +57,7 @@ expr:
   | expr MINUS expr { Expr.Infix("-", $1, $3, newType()) }
   | expr EQ    expr { Expr.Infix("=", $1, $3, newType()) }
   | LET IDENT EQ expr IN expr
-    %prec prec_rec
+    %prec prec_let
     { Expr.Let($2, newType(), $4, $6) }
   | IF expr THEN expr ELSE expr
     %prec prec_if
