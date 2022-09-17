@@ -12,7 +12,7 @@ let newline (lexbuf: LexBuffer<_>) =
 
 let whitespace = [' ' '\t']
 let newline = ('\n' | '\r' '\n')
-
+let lComment = "//" [^ '\n' '\r']*
 
 let digit = ['0'-'9']
 
@@ -24,6 +24,7 @@ let ident = identStart (identStart | digit)*
 
 rule read = parse
 | whitespace { read lexbuf }
+| lComment   { read lexbuf }
 | newline    { newline lexbuf; read lexbuf }
 | "let"      { LET }
 | "in"       { IN }
