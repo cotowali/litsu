@@ -25,6 +25,7 @@ let ident = identStart (identStart | digit)*
 rule read = parse
 | whitespace { read lexbuf }
 | lComment   { read lexbuf }
+| "(*"       { comment lexbuf; read lexbuf }
 | newline    { newline lexbuf; read lexbuf }
 | "let"      { LET }
 | "in"       { IN }
@@ -48,3 +49,9 @@ and read_string buf = parse
 | '"' { STRING(buf) }
 | eof { failwith ("ParseError: string literal is not terminated") }
 | _ { read_string (buf + (lexeme lexbuf)) lexbuf }
+
+and comment = parse
+| "*)" { () }
+| "(*" { comment lexbuf; comment lexbuf }
+| eof  { failwith ("ParseError: comment is not terminated") }
+| _    { comment lexbuf }

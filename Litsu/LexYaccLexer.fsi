@@ -20,4 +20,6 @@ namespace Litsu
         val read_string:
           buf: string -> lexbuf: FSharp.Text.Lexing.LexBuffer<char>
             -> LexYaccParser.token
+        
+        val comment: lexbuf: FSharp.Text.Lexing.LexBuffer<char> -> unit
 
