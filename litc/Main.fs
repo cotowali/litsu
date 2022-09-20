@@ -9,6 +9,7 @@ open System
 open System.IO
 open Litsu.SyntaxTree
 open Litsu.Parser
+open Litsu.Typing
 open Litsu.Compiler
 open Litsu.Run
 
@@ -16,6 +17,7 @@ type MainArgs =
     | [<MainCommand>] File of file: string
     | [<CliPrefix(CliPrefix.None)>] Run
     | [<CliPrefix(CliPrefix.None)>] Ast
+    | [<CliPrefix(CliPrefix.None)>] TypedAst
 
     interface IArgParserTemplate with
         member this.Usage =
@@ -23,6 +25,7 @@ type MainArgs =
             | File _ -> "input file"
             | Run _ -> "run after compile"
             | Ast _ -> "print ast"
+            | TypedAst _ -> "print ast with type check"
 
 [<EntryPoint>]
 let main argv =
@@ -58,6 +61,8 @@ let main argv =
         (try
             if results.TryGetResult(MainArgs.Ast) <> None then
                 (0, parse code |> sprintf "%A\n")
+            else if results.TryGetResult(MainArgs.TypedAst) <> None then
+                (0, parse code |> check |> sprintf "%A\n")
             else if results.TryGetResult(MainArgs.Run) <> None then
                 (run code, "")
             else
