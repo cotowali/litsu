@@ -10,6 +10,7 @@
 
 module Litsu.SyntaxTree
 
+open FSharp.Text.Lexing
 open Litsu.Type
 
 type Expr =
@@ -33,3 +34,5 @@ let rec typ: (Expr -> Type) =
 
 type Node = Expr of Expr
 type Program = { Nodes: Node list }
+
+exception SyntaxError of Position * string option

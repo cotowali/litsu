@@ -7,6 +7,7 @@
 open Argu
 open System
 open System.IO
+open Litsu.SyntaxTree
 open Litsu.Parser
 open Litsu.Compiler
 open Litsu.Run
@@ -53,14 +54,17 @@ let main argv =
 
         file.ReadToEnd()
 
-    let isRun = results.TryGetResult(MainArgs.Run) <> None
-    let isAst = results.TryGetResult(MainArgs.Ast) <> None
+    let (exitcode, out) =
+        (try
+            if results.TryGetResult(MainArgs.Ast) <> None then
+                (0, parse code |> sprintf "%A\n")
+            else if results.TryGetResult(MainArgs.Run) <> None then
+                (run code, "")
+            else
+                (0, compile code |> sprintf "%s")
+         with
+         | SyntaxError (pos, None) -> (1, sprintf "%d:%d: %s\n" pos.Line pos.Column "SyntaxError")
+         | SyntaxError (pos, Some (msg)) -> (1, sprintf "%d:%d: %s" pos.Line pos.Column msg))
 
-    if isAst then
-        parse code |> printfn "%A"
-        0
-    else if isRun then
-        run code
-    else
-        compile code |> printf "%s"
-        0
+    (if exitcode = 0 then printf else eprintf) "%s" out
+    exitcode

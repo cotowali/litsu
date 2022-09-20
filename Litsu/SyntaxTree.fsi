@@ -18,4 +18,6 @@ namespace Litsu
         
         type Program =
             { Nodes: Node list }
+        
+        exception SyntaxError of FSharp.Text.Lexing.Position * string option
 
