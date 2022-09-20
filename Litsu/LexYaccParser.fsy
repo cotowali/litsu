@@ -16,6 +16,7 @@ let parse_error_rich = Some(fun (ctx: ParseErrorContext<_>) -> failwith "xxx")
 %token <string> IDENT
 %token LET IN
 %token IF THEN ELSE
+%token SEMICOLON
 
 %token LPAREN RPAREN
 %token PLUS MINUS
@@ -43,7 +44,8 @@ rev_nodes:
   | rev_nodes node { $2 :: $1 }
 
 node:
-  | expr { Node.Expr $1 }
+  | expr           { Node.Expr $1 }
+  | expr SEMICOLON { Node.Expr $1 }
 
 simple_expr:
   | LPAREN expr RPAREN { $2 }

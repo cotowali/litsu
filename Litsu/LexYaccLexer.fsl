@@ -33,6 +33,7 @@ rule read = parse
 | "then"     { THEN }
 | "else"     { ELSE }
 | int        { INT(lexeme lexbuf |> int64) }
+| ';'        { SEMICOLON }
 | '+'        { PLUS }
 | '-'        { MINUS }
 | '='        { EQ }

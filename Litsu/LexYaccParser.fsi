@@ -11,6 +11,7 @@ namespace Litsu
             | MINUS
             | LPAREN
             | RPAREN
+            | SEMICOLON
             | IF
             | THEN
             | ELSE
@@ -27,6 +28,7 @@ namespace Litsu
             | TOKEN_MINUS
             | TOKEN_LPAREN
             | TOKEN_RPAREN
+            | TOKEN_SEMICOLON
             | TOKEN_IF
             | TOKEN_THEN
             | TOKEN_ELSE
