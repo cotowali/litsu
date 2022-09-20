@@ -15,6 +15,7 @@ type Type =
     | String
     | Int
     | Bool
+    | Fun of Type list * Type
     | Var of Type option ref
 
 let newType () = Var(ref None)

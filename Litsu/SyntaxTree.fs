@@ -16,7 +16,8 @@ type Expr =
     | Int of int64
     | String of string
     | Infix of string * Expr * Expr * Type // op lhs rhs typ
-    | Let of string * Type * Expr * Expr
+    | Let of string * Type * (string * Type) list * Expr * Expr // name t args
+    | App of Expr * Expr list * Type
     | Var of string * Type
     | If of Expr * Expr * Expr * Type // cond trueBody falseBody typ
 
@@ -26,7 +27,8 @@ let rec typ: (Expr -> Type) =
     | Expr.String (_) -> Type.String
     | Expr.Infix (_, _, _, t) -> t
     | Expr.If (_, _, _, t) -> t
-    | Expr.Let (_, t, _, _) -> t
+    | Expr.Let (_, t, _, _, _) -> t
+    | Expr.App (_, _, t) -> t
     | Expr.Var (_, t) -> t
 
 type Node = Expr of Expr

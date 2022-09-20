@@ -15,6 +15,10 @@ open Litsu.Type
 type TypeEnv = Map<string, Type>
 
 let add: (string -> Type -> TypeEnv -> TypeEnv) = Map.add
+
+let addList (items: (string * Type) list) (env: TypeEnv) : TypeEnv =
+    List.fold (fun env (k, t) -> add k t env) env items
+
 let exists: string -> TypeEnv -> bool = Map.containsKey
 let find: (string -> TypeEnv -> Type) = Map.find
 let tryFind: (string -> TypeEnv -> Type option) = Map.tryFind

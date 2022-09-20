@@ -28,6 +28,7 @@ let parse_error_rich = Some(fun (ctx: ParseErrorContext<_>) -> failwith "xxx")
 %right prec_if
 %left EQ
 %left PLUS MINUS
+%left prec_app
 
 %type <SyntaxTree.Program> program
 
@@ -58,9 +59,31 @@ expr:
   | expr PLUS  expr { Expr.Infix("+", $1, $3, newType()) }
   | expr MINUS expr { Expr.Infix("-", $1, $3, newType()) }
   | expr EQ    expr { Expr.Infix("=", $1, $3, newType()) }
+  | simple_expr actual_args
+    %prec prec_app
+    { Expr.App($1, $2, newType()) }
   | LET IDENT EQ expr IN expr
     %prec prec_let
-    { Expr.Let($2, newType(), $4, $6) }
+    { Expr.Let($2, newType(), [], $4, $6) }
+  | LET IDENT formal_args EQ expr IN expr
+    %prec prec_let
+    { Expr.Let($2, newType(), $3, $5, $7) }
   | IF expr THEN expr ELSE expr
     %prec prec_if
     { Expr.If($2, $4, $6, newType()) }
+
+
+formal_args:
+  | IDENT formal_args
+    { ($1, newType()) :: $2 }
+  | IDENT { [($1, newType())] }
+
+actual_args:
+  | rev_actual_args
+    { List.rev $1 }
+
+rev_actual_args:
+  | rev_actual_args simple_expr
+    { $2 :: $1 }
+  | simple_expr
+    { [$1] }

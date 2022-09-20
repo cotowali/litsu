@@ -19,4 +19,6 @@ let parse text : SyntaxTree.Program =
     try
         LexYaccParser.program LexYaccLexer.read lexbuf
     with e ->
-        failwith (sprintf "ParseError at Line:%d Column:%d" lexbuf.StartPos.Line lexbuf.StartPos.Column)
+        failwith (
+            sprintf "ParseError at Line:%d Column:%d" lexbuf.StartPos.Line lexbuf.StartPos.Column
+        )

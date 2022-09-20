@@ -29,6 +29,13 @@ let rec unify (t1: Type) (t2: Type) =
     | Type.Int, Type.Int
     | Type.Bool, Type.Bool
     | Type.String, Type.String -> ()
+    | Type.Fun (args1, rt1), Type.Fun (args2, rt2) ->
+        (try
+            List.iter2 unify args1 args2
+         with Invalid_argument (_) ->
+             raise (UnifyException(t1, t2)))
+
+        unify rt1 rt2
     | Type.Var (r1), Type.Var (r2) when r1 == r2 -> ()
     | Type.Var ({ contents = Some (t1') }), _ -> unify t1' t2
     | _, Type.Var ({ contents = Some (t2') }) -> unify t1 t2'
@@ -65,7 +72,9 @@ let rec derefExpr (expr: Expr) : Expr =
     | Expr.String (s) -> Expr.String(s)
     | Expr.Infix (op, lhs, rhs, t) -> Expr.Infix(op, de lhs, de rhs, dt t)
     | Expr.If (cond, e1, e2, t) -> Expr.If(de cond, de e1, de e2, dt t)
-    | Expr.Let (name, typ, e1, e2) -> Let(name, dt typ, de e1, de e2)
+    | Expr.Let (name, typ, args, e1, e2) ->
+        Let(name, dt typ, (List.map (fun (s, t) -> s, dt t) args), de e1, de e2)
+    | Expr.App (f, args, t) -> App(de f, List.map de args, dt t)
     | Expr.Var (name, typ) -> Expr.Var(name, dt typ)
 
 and derefNode: Node -> Node =
@@ -97,9 +106,20 @@ let rec infer (env: TypeEnv) (e: Expr) : Type =
         unify t1 t2
         unify t t1
         t
-    | Expr.Let (name, t, e1, e2) ->
-        unify t (infer env e1)
+    | Expr.Let (name, t, args, e1, e2) ->
+        unify
+            t
+            (if List.length args > 0 then
+                 Type.Fun(List.map snd args, infer (TypeEnv.addList args env) e1)
+             else
+                 infer env e1)
+
         infer (TypeEnv.add name t env) e2
+    | Expr.App (f, args, t) ->
+        unify (infer env f) (Type.Fun(List.map (infer env) args, t))
+        // t is still newType here.
+        // it will be replaced by calling unify at caller of this func
+        t
     | Expr.Var (name, t) ->
         if TypeEnv.exists name env then
             let t' = TypeEnv.find name env in

@@ -49,6 +49,9 @@ namespace Litsu
             | NONTERM_node
             | NONTERM_simple_expr
             | NONTERM_expr
+            | NONTERM_formal_args
+            | NONTERM_actual_args
+            | NONTERM_rev_actual_args
         
         val tagOfToken: t: token -> int
         

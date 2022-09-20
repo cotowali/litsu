@@ -20,9 +20,13 @@ type Context = { IndentN: int }
 
 let private newContext () : Context = { IndentN = 0 }
 
+let private newInnerContext (ctx: Context) : Context = { ctx with IndentN = ctx.IndentN + 1 }
+
 let private varname (name: string) : string = sprintf "LITSU_%s" name
 
 let private sTrue, sFalse = ("true", "false")
+
+let private indentStr (ctx: Context) : string = String.replicate ctx.IndentN "  "
 
 let rec private genExpr (ctx: Context) (write: string -> unit) (expr: Expr) : unit =
     let rec f: Expr -> string =
@@ -62,15 +66,40 @@ let rec private genExpr (ctx: Context) (write: string -> unit) (expr: Expr) : un
             genExpr { ctx with IndentN = ctx.IndentN + 1 } writeInner e2
             writeInner "fi)"
             out
-        | Expr.Let (name, typ, init, body) ->
-            let mutable out = sprintf "$(%s=\"%s\"\n" (varname name) (f init)
+        | Expr.Let (name, typ, args, init, body) ->
+            let mutable out = "$("
             let writeInner s = out <- out + s
-            genExpr { ctx with IndentN = ctx.IndentN + 1 } writeInner body
-            out <- out + ")"
+            let ctx = newInnerContext ctx
+
+            if List.length args > 0 then
+                let fname = varname name
+                writeInner (sprintf "%s() {\n" fname)
+
+                (fun () ->
+                    let ctx = newInnerContext ctx in
+
+                    List.iteri
+                        (fun i name ->
+                            writeInner (sprintf "%s%s=$%d\n" (indentStr ctx) (varname name) (i + 1)))
+                        (List.map fst args)
+
+                    genExpr ctx writeInner init)
+                    ()
+
+                writeInner (sprintf "%s}\n" (indentStr ctx))
+                // This allows calling function with "${name} args"
+                writeInner (sprintf "%s%s=%s\n" (indentStr ctx) fname fname)
+            else
+                writeInner (sprintf "%s=\"%s\"\n" (varname name) (f init))
+
+            genExpr ctx writeInner body
+
+            writeInner ")"
             out
+        | Expr.App (fe, args, _) -> sprintf "$(%s %s)" (f fe) (String.concat " " (List.map f args))
         | Expr.Var (name, _typ) -> sprintf "${%s}" (varname name)
 
-    write (String.replicate ctx.IndentN "  ")
+    write (indentStr ctx)
     write (sprintf "printf '%%s\\n' \"%s\"\n" (f expr)) |> ignore
 
 let private genNode (ctx: Context) (write: string -> unit) (node: Node) : unit =

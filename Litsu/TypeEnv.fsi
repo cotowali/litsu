@@ -6,6 +6,8 @@ namespace Litsu
         
         val add: (string -> Type.Type -> TypeEnv -> TypeEnv)
         
+        val addList: items: (string * Type.Type) list -> env: TypeEnv -> TypeEnv
+        
         val exists: (string -> TypeEnv -> bool)
         
         val find: (string -> TypeEnv -> Type.Type)

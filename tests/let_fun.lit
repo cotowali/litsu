@@ -1,0 +1,6 @@
+let add a b = a + b in add 1 2
+(* TODO
+let add a b = a + b in
+let inc = add 1 in
+inc 1
+*)

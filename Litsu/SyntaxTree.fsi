@@ -6,7 +6,9 @@ namespace Litsu
             | Int of int64
             | String of string
             | Infix of string * Expr * Expr * Type.Type
-            | Let of string * Type.Type * Expr * Expr
+            | Let of
+              string * Type.Type * (string * Type.Type) list * Expr * Expr
+            | App of Expr * Expr list * Type.Type
             | Var of string * Type.Type
             | If of Expr * Expr * Expr * Type.Type
         
