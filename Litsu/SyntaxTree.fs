@@ -36,3 +36,4 @@ type Node = Expr of Expr
 type Program = { Nodes: Node list }
 
 exception SyntaxError of Position * string option
+exception ExprException of Expr * string option

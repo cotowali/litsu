@@ -4,6 +4,8 @@ namespace Litsu
         
         exception UnifyException of Type.Type * Type.Type
         
+        exception UndefinedVariableException of string
+        
         val occur: r1: Type.Type option ref -> _arg1: Type.Type -> bool
         
         val unify: t1: Type.Type -> t2: Type.Type -> unit

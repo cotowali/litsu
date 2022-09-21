@@ -16,6 +16,7 @@ open Litsu.TypeEnv
 open Litsu.SyntaxTree
 
 exception UnifyException of Type * Type
+exception UndefinedVariableException of string
 
 let rec occur r1 =
     function
@@ -84,49 +85,54 @@ and derefNode: Node -> Node =
 let deref (p: Program) : Program = { Nodes = List.map derefNode p.Nodes }
 
 let rec infer (env: TypeEnv) (e: Expr) : Type =
-    match e with
-    | Expr.Int (_) -> Type.Int
-    | Expr.String (_) -> Type.String
-    | Expr.Infix (op, lhs, rhs, t) ->
-        let t1 = (infer env lhs)
-        let t2 = (infer env rhs)
-        unify t1 t2
+    try
+        match e with
+        | Expr.Int (_) -> Type.Int
+        | Expr.String (_) -> Type.String
+        | Expr.Infix (op, lhs, rhs, t) ->
+            let t1 = (infer env lhs)
+            let t2 = (infer env rhs)
+            unify t1 t2
 
-        match op with
-        | "=" -> unify t Type.Bool
-        | "+"
-        | "-" -> unify t t1
-        | _ -> failwith (sprintf "Unknown operator `%s`" op)
+            match op with
+            | "=" -> unify t Type.Bool
+            | "+"
+            | "-" -> unify t t1
+            | _ -> failwith (sprintf "Unknown operator `%s`" op)
 
-        t
-    | Expr.If (cond, e1, e2, t) ->
-        unify Type.Bool (infer env cond)
-        let t1 = (infer env e1) in
-        let t2 = (infer env e2) in
-        unify t1 t2
-        unify t t1
-        t
-    | Expr.Let (name, t, args, e1, e2) ->
-        unify
             t
-            (if List.length args > 0 then
-                 Type.Fun(List.map snd args, infer (TypeEnv.addList args env) e1)
-             else
-                 infer env e1)
+        | Expr.If (cond, e1, e2, t) ->
+            unify Type.Bool (infer env cond)
+            let t1 = (infer env e1) in
+            let t2 = (infer env e2) in
+            unify t1 t2
+            unify t t1
+            t
+        | Expr.Let (name, t, args, e1, e2) ->
+            unify
+                t
+                (if List.length args > 0 then
+                     Type.Fun(List.map snd args, infer (TypeEnv.addList args env) e1)
+                 else
+                     infer env e1)
 
-        infer (TypeEnv.add name t env) e2
-    | Expr.App (f, args, t) ->
-        unify (infer env f) (Type.Fun(List.map (infer env) args, t))
-        // t is still newType here.
-        // it will be replaced by calling unify at caller of this func
-        t
-    | Expr.Var (name, t) ->
-        if TypeEnv.exists name env then
-            let t' = TypeEnv.find name env in
-            unify t t'
-            t'
-        else
-            failwith (sprintf "Undefined variable %s" name)
+            infer (TypeEnv.add name t env) e2
+        | Expr.App (f, args, t) ->
+            unify (infer env f) (Type.Fun(List.map (infer env) args, t))
+            // t is still newType here.
+            // it will be replaced by calling unify at caller of this func
+            t
+        | Expr.Var (name, t) ->
+            if TypeEnv.exists name env then
+                let t' = TypeEnv.find name env in
+                unify t t'
+                t'
+            else
+                raise (UndefinedVariableException name)
+    with
+    | UnifyException (t1, t2) ->
+        raise (ExprException(e, Some(sprintf "mismatched type: %A and %A" t1 t2)))
+    | e -> raise e
 
 let check (p: Program) : Program =
     let env = TypeEnv []

@@ -20,4 +20,6 @@ namespace Litsu
             { Nodes: Node list }
         
         exception SyntaxError of FSharp.Text.Lexing.Position * string option
+        
+        exception ExprException of Expr * string option
 

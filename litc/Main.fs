@@ -69,7 +69,10 @@ let main argv =
                 (0, compile code |> sprintf "%s")
          with
          | SyntaxError (pos, None) -> (1, sprintf "%d:%d: %s\n" pos.Line pos.Column "SyntaxError")
-         | SyntaxError (pos, Some (msg)) -> (1, sprintf "%d:%d: %s" pos.Line pos.Column msg))
+         | SyntaxError (pos, Some (msg)) -> (1, sprintf "%d:%d: %s" pos.Line pos.Column msg)
+         | ExprException (e, None) -> (1, sprintf "error at %A" e)
+         | ExprException (e, Some (msg)) -> (1, sprintf "%s\n-- at --\n%A\n--------\n" msg e)
+         | UndefinedVariableException (v) -> (1, sprintf "undefined variable `%s`\n" v))
 
     (if exitcode = 0 then printf else eprintf) "%s" out
     exitcode
