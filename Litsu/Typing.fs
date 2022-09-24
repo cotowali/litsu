@@ -53,15 +53,18 @@ let rec unify (t1: Type) (t2: Type) =
     | _, _ -> raise (UnifyException(t1, t2))
 
 
-let rec derefType: Type -> Type =
-    function
+let rec derefType (t: Type) : Type =
+    let dt = derefType in
+
+    match t with
     | Type.Var ({ contents = None } as r) ->
         r := Some(Type.Unknown)
         Type.Unknown
     | Type.Var ({ contents = Some (t) } as r) ->
-        let t = derefType t in
+        let t = dt t in
         r := Some(t)
         t
+    | Type.Fun (targs, t) -> Type.Fun(List.map dt targs, derefType t)
     | t -> t
 
 let rec derefExpr (expr: Expr) : Expr =

@@ -10,7 +10,7 @@ namespace Litsu
         
         val unify: t1: Type.Type -> t2: Type.Type -> unit
         
-        val derefType: _arg1: Type.Type -> Type.Type
+        val derefType: t: Type.Type -> Type.Type
         
         val derefExpr: expr: SyntaxTree.Expr -> SyntaxTree.Expr
         
