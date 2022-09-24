@@ -40,6 +40,7 @@ let rec private genExpr (ctx: Context) (write: string -> unit) (expr: Expr) : un
                 | '$' -> "\\$"
                 | c -> sprintf "%c" c)
                 s
+        | Expr.Unit -> ""
         | Expr.Infix (op, lhs, rhs, t) ->
             (match op with
              | "+"
@@ -80,8 +81,10 @@ let rec private genExpr (ctx: Context) (write: string -> unit) (expr: Expr) : un
 
                     List.iteri
                         (fun i name ->
-                            writeInner (sprintf "%s%s=$%d\n" (indentStr ctx) (varname name) (i + 1)))
-                        (List.map fst args)
+                            writeInner (
+                                sprintf "%s%s=$%d\n" (indentStr ctx) (varname name) (i + 1)
+                            ))
+                        (List.map fst (List.filter (fun (_, t) -> t <> Type.Unit) args))
 
                     genExpr ctx writeInner init)
                     ()
@@ -97,11 +100,28 @@ let rec private genExpr (ctx: Context) (write: string -> unit) (expr: Expr) : un
             writeInner ")"
             out
         | Expr.App (fe, args, Type.Fun (fargs, ft)) -> failwith "patial app is unimplemented"
-        | Expr.App (fe, args, _) -> sprintf "$(%s %s)" (f fe) (String.concat " " (List.map f args))
+        | Expr.App (fe, args, _) ->
+            sprintf
+                "$(%s %s)"
+                (f fe)
+                (String.concat
+                    " "
+                    (List.map
+                        (fun e -> sprintf "\"%s\"" (f e))
+                        (List.filter (fun e -> typ e <> Type.Unit) args)))
         | Expr.Var (name, _typ) -> sprintf "${%s}" (varname name)
 
     write (indentStr ctx)
-    write (sprintf "printf '%%s\\n' \"%s\"\n" (f expr)) |> ignore
+
+    write (
+        sprintf
+            "printf '%%s%s' \"%s\"\n"
+            (match typ expr with
+             | Type.Unit as t
+             | Fun (_, t) when t = Type.Unit -> ""
+             | _ -> "\\n")
+            (f expr)
+    )
 
 let private genNode (ctx: Context) (write: string -> unit) (node: Node) : unit =
     match node with

@@ -5,6 +5,7 @@ namespace Litsu
         type Expr =
             | Int of int64
             | String of string
+            | Unit
             | Infix of string * Expr * Expr * Type.Type
             | Let of
               string * Type.Type * (string * Type.Type) list * Expr * Expr

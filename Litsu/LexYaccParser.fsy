@@ -50,9 +50,10 @@ node:
 
 simple_expr:
   | LPAREN expr RPAREN { $2 }
-  | IDENT  { Expr.Var($1, newType()) }
-  | INT    { Expr.Int($1) }
-  | STRING { Expr.String($1) }
+  | IDENT         { Expr.Var($1, newType()) }
+  | LPAREN RPAREN { Expr.Unit }
+  | INT           { Expr.Int($1) }
+  | STRING        { Expr.String($1) }
 
 expr:
   | simple_expr { $1 }
@@ -76,7 +77,10 @@ expr:
 formal_args:
   | IDENT formal_args
     { ($1, newType()) :: $2 }
-  | IDENT { [($1, newType())] }
+  | LPAREN RPAREN formal_args
+    { ("", Type.Unit ) :: $3 }
+  | IDENT         { [($1, newType())] }
+  | LPAREN RPAREN { [("", Type.Unit)] }
 
 actual_args:
   | rev_actual_args

@@ -30,6 +30,7 @@ let rec unify (t1: Type) (t2: Type) =
     | Type.Int, Type.Int
     | Type.Bool, Type.Bool
     | Type.String, Type.String -> ()
+    | Type.Unit, Type.Unit -> ()
     | Type.Fun (args1, rt1), Type.Fun (args2, rt2) ->
         (try
             List.iter2 unify args1 args2
@@ -72,8 +73,9 @@ let rec derefExpr (expr: Expr) : Expr =
     let dt = derefType in
 
     match expr with
-    | Expr.Int (n) -> Expr.Int(n)
-    | Expr.String (s) -> Expr.String(s)
+    | Expr.Int (_)
+    | Expr.String (_)
+    | Expr.Unit as e -> e
     | Expr.Infix (op, lhs, rhs, t) -> Expr.Infix(op, de lhs, de rhs, dt t)
     | Expr.If (cond, e1, e2, t) -> Expr.If(de cond, de e1, de e2, dt t)
     | Expr.Let (name, typ, args, e1, e2) ->
@@ -92,6 +94,7 @@ let rec infer (env: TypeEnv) (e: Expr) : Type =
         match e with
         | Expr.Int (_) -> Type.Int
         | Expr.String (_) -> Type.String
+        | Expr.Unit -> Type.Unit
         | Expr.Infix (op, lhs, rhs, t) ->
             let t1 = (infer env lhs)
             let t2 = (infer env rhs)

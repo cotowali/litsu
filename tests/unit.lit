@@ -1,0 +1,7 @@
+();
+let f () = () in f ();
+let fa () a () = a in fa () "fa () a ()" ();
+if (let f () = () in f ()) = () then
+  "f() is unit"
+else
+  "f() is not unit"
