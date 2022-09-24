@@ -1,2 +1,2 @@
 [*.{fs,fsl,fsy,ml,mll,mly}]
-max_line_length = 100
+max_line_length = 99
