@@ -121,10 +121,21 @@ let rec infer (env: TypeEnv) (e: Expr) : Type =
 
             infer (TypeEnv.add name t env) e2
         | Expr.App (f, args, t) ->
-            unify (infer env f) (Type.Fun(List.map (infer env) args, t))
-            // t is still newType here.
-            // it will be replaced by calling unify at caller of this func
-            t
+            let ft = infer env f in
+            let nargs = List.length args in
+
+            match ft with
+            | (Fun (fargs, rt)
+            | Type.Var ({ contents = Some (Fun (fargs, rt)) })) when List.length fargs > nargs ->
+                // partial apply
+                List.iter2 unify fargs[0 .. (nargs - 1)] (List.map (infer env) args)
+                unify t (Fun(fargs[(nargs - 1) .. (List.length fargs)], rt))
+                t
+            | _ ->
+                unify ft (Type.Fun(List.map (infer env) args, t))
+                // t is still newType here.
+                // it will be replaced by calling unify at caller of this func
+                t
         | Expr.Var (name, t) ->
             if TypeEnv.exists name env then
                 let t' = TypeEnv.find name env in

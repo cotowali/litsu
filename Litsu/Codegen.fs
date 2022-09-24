@@ -96,6 +96,7 @@ let rec private genExpr (ctx: Context) (write: string -> unit) (expr: Expr) : un
 
             writeInner ")"
             out
+        | Expr.App (fe, args, Type.Fun (fargs, ft)) -> failwith "patial app is unimplemented"
         | Expr.App (fe, args, _) -> sprintf "$(%s %s)" (f fe) (String.concat " " (List.map f args))
         | Expr.Var (name, _typ) -> sprintf "${%s}" (varname name)
 
