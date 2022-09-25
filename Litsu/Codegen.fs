@@ -16,9 +16,9 @@ open Litsu.Type
 
 let unreachable () = failwith "Unreachable"
 
-type Context = { IndentN: int }
+type Context = { IndentN: int; Counter: int ref }
 
-let private newContext () : Context = { IndentN = 0 }
+let private newContext () : Context = { IndentN = 0; Counter = ref 0 }
 
 let private newInnerContext (ctx: Context) : Context = { ctx with IndentN = ctx.IndentN + 1 }
 
@@ -26,11 +26,24 @@ let private varname (name: string) : string = sprintf "LITSU_%s" name
 
 let private sTrue, sFalse = ("true", "false")
 
-let private indentStr (ctx: Context) : string = String.replicate ctx.IndentN "  "
+let private indentStr (n: int) : string = String.replicate n "  "
+let private ctxIndentStr (ctx: Context) : string = indentStr ctx.IndentN
 
-let rec private genExpr (ctx: Context) (write: string -> unit) (expr: Expr) : unit =
-    let rec f: Expr -> string =
-        function
+type writeF = string -> unit
+
+let rec private genExpr (ctx: Context) (write: writeF) (expr: Expr) : unit =
+    let filterArgs = List.filter (fun e -> typ e <> Type.Unit)
+
+    let rec funcCall (wo: writeF) (fe: Expr) (args: Expr list) =
+        sprintf
+            "%s %s"
+            (f wo fe)
+            (String.concat " " (List.map (fun e -> sprintf "\"%s\"" (f wo e)) (filterArgs args)))
+
+    and f (writeOuter: string -> unit) (expr: Expr) : string =
+        let wo = writeOuter
+
+        match expr with
         | Expr.Int (n) -> sprintf "%d" n
         | Expr.String (s) ->
             String.collect
@@ -46,7 +59,7 @@ let rec private genExpr (ctx: Context) (write: string -> unit) (expr: Expr) : un
              | "+"
              | "-" ->
                  (match t with
-                  | Type.Int -> sprintf "$(( ( %s ) %s ( %s ) ))" (f lhs) op (f rhs)
+                  | Type.Int -> sprintf "$(( ( %s ) %s ( %s ) ))" (f wo lhs) op (f wo rhs)
                   | _ -> unreachable ())
              | "=" ->
                  let op =
@@ -55,12 +68,13 @@ let rec private genExpr (ctx: Context) (write: string -> unit) (expr: Expr) : un
                       | Type.Bool -> "="
                       | _ -> unreachable ())
 
-                 let cond = sprintf "[ \"%s\" %s \"%s\" ]" (f lhs) op (f rhs) in
+                 let cond = sprintf "[ \"%s\" %s \"%s\" ]" (f wo lhs) op (f wo rhs) in
                  sprintf "$(%s && printf '%s' || printf '%s')" cond sTrue sFalse
              | _ -> unreachable ())
         | Expr.If (cond, e1, e2, _) ->
-            let mutable out = sprintf "$(if [ \"%s\" = '%s' ]\n" (f cond) sTrue
+            let mutable out = sprintf "$(if [ \"%s\" = '%s' ]\n" (f wo cond) sTrue
             let writeInner s = out <- out + s
+            let writeOuter s = out <- s + out
             writeInner "then\n"
             genExpr { ctx with IndentN = ctx.IndentN + 1 } writeInner e1
             writeInner "else\n"
@@ -70,7 +84,9 @@ let rec private genExpr (ctx: Context) (write: string -> unit) (expr: Expr) : un
         | Expr.Let (name, typ, args, init, body) ->
             let mutable out = "$("
             let writeInner s = out <- out + s
-            let ctx = newInnerContext ctx
+            let writeOuter s = out <- s + out
+            let origCtx = ctx
+            let ctx = newInnerContext origCtx
 
             if List.length args > 0 then
                 let fname = varname name
@@ -82,46 +98,61 @@ let rec private genExpr (ctx: Context) (write: string -> unit) (expr: Expr) : un
                     List.iteri
                         (fun i name ->
                             writeInner (
-                                sprintf "%s%s=$%d\n" (indentStr ctx) (varname name) (i + 1)
+                                sprintf "%s%s=$%d\n" (ctxIndentStr ctx) (varname name) (i + 1)
                             ))
                         (List.map fst (List.filter (fun (_, t) -> t <> Type.Unit) args))
 
                     genExpr ctx writeInner init)
                     ()
 
-                writeInner (sprintf "%s}\n" (indentStr ctx))
+                writeInner (sprintf "%s}\n" (ctxIndentStr ctx))
                 // This allows calling function with "${name} args"
-                writeInner (sprintf "%s%s=%s\n" (indentStr ctx) fname fname)
+                writeInner (sprintf "%s%s=%s\n" (ctxIndentStr ctx) fname fname)
             else
-                writeInner (sprintf "%s=\"%s\"\n" (varname name) (f init))
+                writeInner (sprintf "%s=\"%s\"\n" (varname name) (f wo init))
 
             genExpr ctx writeInner body
 
+            writeInner (ctxIndentStr origCtx)
             writeInner ")"
             out
-        | Expr.App (fe, args, Type.Fun (fargs, ft)) -> failwith "patial app is unimplemented"
-        | Expr.App (fe, args, _) ->
-            sprintf
-                "$(%s %s)"
-                (f fe)
-                (String.concat
-                    " "
-                    (List.map
-                        (fun e -> sprintf "\"%s\"" (f e))
-                        (List.filter (fun e -> typ e <> Type.Unit) args)))
+        | Expr.App (fe, args, Type.Fun (targs, ft)) ->
+            let fname =
+                incr ctx.Counter
+                sprintf "__anon_func_%d" ctx.Counter.contents
+
+            match typ fe with
+            | Type.Fun (ftargs, rt) ->
+                writeOuter (
+                    (sprintf
+                        "%s%s() %s \"$@\"\n"
+                        (ctxIndentStr ctx)
+                        fname
+                        (funcCall wo fe args)) +
+                    (sprintf "%s%s=%s;\n" (ctxIndentStr ctx) fname fname))
+                sprintf "%s" fname
+            | _ -> unreachable ()
+        // partial app
+        //sprintf "%s() { %s; %s }" fname (String.concat ";"
+        | Expr.App (fe, args, _) -> sprintf "$(%s)" (funcCall wo fe args)
         | Expr.Var (name, _typ) -> sprintf "${%s}" (varname name)
 
-    write (indentStr ctx)
+    let mutable out = ""
+    let writeInner s = out <- out + s
+    let writeOuter s = out <- s + out
+    writeInner (ctxIndentStr ctx)
 
-    write (
+    writeInner (
         sprintf
             "printf '%%s%s' \"%s\"\n"
             (match typ expr with
              | Type.Unit as t
              | Fun (_, t) when t = Type.Unit -> ""
              | _ -> "\\n")
-            (f expr)
+            (f writeOuter expr)
     )
+
+    write out
 
 let private genNode (ctx: Context) (write: string -> unit) (node: Node) : unit =
     match node with

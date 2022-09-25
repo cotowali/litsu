@@ -1,7 +1,7 @@
-let f () = "unit" in f ()
-let add a b = a + b in add 1 2
-(* TODO
+let f () = "unit" in f ();
+let add a b = a + b in add 1 2;
 let add a b = a + b in
-let inc = add 1 in
-inc 1
-*)
+  let add_alt = add in add_alt 2 2;
+let add a b = a + b in
+  let inc = add 1 in
+  inc 1

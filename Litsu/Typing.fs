@@ -132,7 +132,7 @@ let rec infer (env: TypeEnv) (e: Expr) : Type =
             | Type.Var ({ contents = Some (Fun (fargs, rt)) })) when List.length fargs > nargs ->
                 // partial apply
                 List.iter2 unify fargs[0 .. (nargs - 1)] (List.map (infer env) args)
-                unify t (Fun(fargs[(nargs - 1) .. (List.length fargs)], rt))
+                unify t (Fun(fargs[(nargs) .. (List.length fargs)], rt))
                 t
             | _ ->
                 unify ft (Type.Fun(List.map (infer env) args, t))

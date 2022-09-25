@@ -5,7 +5,10 @@ namespace Litsu
         val unreachable: unit -> 'a
         
         type Context =
-            { IndentN: int }
+            {
+              IndentN: int
+              Counter: int ref
+            }
         
         val private newContext: unit -> Context
         
@@ -17,11 +20,14 @@ namespace Litsu
         
         val sFalse: string
         
-        val private indentStr: ctx: Context -> string
+        val private indentStr: n: int -> string
+        
+        val private ctxIndentStr: ctx: Context -> string
+        
+        type writeF = string -> unit
         
         val private genExpr:
-          ctx: Context -> write: (string -> unit) -> expr: SyntaxTree.Expr
-            -> unit
+          ctx: Context -> write: writeF -> expr: SyntaxTree.Expr -> unit
         
         val private genNode:
           ctx: Context -> write: (string -> unit) -> node: SyntaxTree.Node
