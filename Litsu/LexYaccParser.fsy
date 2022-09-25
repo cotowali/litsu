@@ -50,37 +50,37 @@ node:
 
 simple_expr:
   | LPAREN expr RPAREN { $2 }
-  | IDENT         { Expr.Var($1, newType()) }
+  | IDENT         { Expr.Var({ Name = $1; Type = newType(); }) }
   | LPAREN RPAREN { Expr.Unit }
   | INT           { Expr.Int($1) }
   | STRING        { Expr.String($1) }
 
 expr:
   | simple_expr { $1 }
-  | expr PLUS  expr { Expr.Infix("+", $1, $3, newType()) }
-  | expr MINUS expr { Expr.Infix("-", $1, $3, newType()) }
-  | expr EQ    expr { Expr.Infix("=", $1, $3, newType()) }
+  | expr PLUS  expr { Expr.Infix({ Op = "+"; Left = $1; Right = $3; Type = newType(); }) }
+  | expr MINUS expr { Expr.Infix({ Op = "-"; Left = $1; Right = $3; Type = newType(); }) }
+  | expr EQ    expr { Expr.Infix({ Op = "="; Left = $1; Right = $3; Type = newType(); }) }
   | simple_expr actual_args
     %prec prec_app
-    { Expr.App($1, $2, newType()) }
+    { Expr.App({ Fun = $1; Args = $2; Type = newType(); }) }
   | LET IDENT EQ expr IN expr
     %prec prec_let
-    { Expr.Let($2, newType(), [], $4, $6) }
+    { Expr.Let({ Name = $2; Type = newType(); Args = []; Expr1 = $4; Expr2 = $6; }) }
   | LET IDENT formal_args EQ expr IN expr
     %prec prec_let
-    { Expr.Let($2, newType(), $3, $5, $7) }
+    { Expr.Let({ Name = $2; Type = newType(); Args = $3; Expr1 = $5; Expr2 = $7; }) }
   | IF expr THEN expr ELSE expr
     %prec prec_if
-    { Expr.If($2, $4, $6, newType()) }
+    { Expr.If({ Cond = $2; Expr1 = $4; Expr2 = $6; Type = newType(); }) }
 
 
 formal_args:
   | IDENT formal_args
-    { ($1, newType()) :: $2 }
+    { { Name = $1; Type = newType(); } :: $2 }
   | LPAREN RPAREN formal_args
-    { ("", Type.Unit ) :: $3 }
-  | IDENT         { [($1, newType())] }
-  | LPAREN RPAREN { [("", Type.Unit)] }
+    { { Name = ""; Type = Type.Unit; } :: $3 }
+  | IDENT         { [{ Name = $1; Type = newType(); }] }
+  | LPAREN RPAREN { [{ Name = ""; Type = Type.Unit; }] }
 
 actual_args:
   | rev_actual_args

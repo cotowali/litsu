@@ -17,22 +17,48 @@ type Expr =
     | Int of int64
     | String of string
     | Unit
-    | Infix of string * Expr * Expr * Type // op lhs rhs typ
-    | Let of string * Type * (string * Type) list * Expr * Expr // name t args
-    | App of Expr * Expr list * Type
-    | Var of string * Type
-    | If of Expr * Expr * Expr * Type // cond trueBody falseBody typ
+    | Infix of Infix
+    | Let of Let
+    | App of App
+    | Var of Var
+    | If of If
+
+and Infix =
+    { Op: string
+      Left: Expr
+      Right: Expr
+      Type: Type }
+
+and Let =
+    { Name: string
+      Type: Type
+      Args: Var list
+      Expr1: Expr
+      Expr2: Expr }
+
+and App =
+    { Fun: Expr
+      Args: Expr list
+      Type: Type }
+
+and Var = { Name: string; Type: Type }
+
+and If =
+    { Cond: Expr
+      Expr1: Expr
+      Expr2: Expr
+      Type: Type }
 
 let rec typ: (Expr -> Type) =
     function
     | Expr.Int (_) -> Type.Int
     | Expr.String (_) -> Type.String
     | Expr.Unit -> Type.Unit
-    | Expr.Infix (_, _, _, t) -> t
-    | Expr.If (_, _, _, t) -> t
-    | Expr.Let (_, t, _, _, _) -> t
-    | Expr.App (_, _, t) -> t
-    | Expr.Var (_, t) -> t
+    | Expr.Infix ({ Type = t })
+    | Expr.If ({ Type = t })
+    | Expr.Let ({ Type = t })
+    | Expr.App ({ Type = t })
+    | Expr.Var ({ Type = t }) -> t
 
 type Node = Expr of Expr
 type Program = { Nodes: Node list }

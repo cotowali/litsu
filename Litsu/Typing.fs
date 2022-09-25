@@ -76,12 +76,35 @@ let rec derefExpr (expr: Expr) : Expr =
     | Expr.Int (_)
     | Expr.String (_)
     | Expr.Unit as e -> e
-    | Expr.Infix (op, lhs, rhs, t) -> Expr.Infix(op, de lhs, de rhs, dt t)
-    | Expr.If (cond, e1, e2, t) -> Expr.If(de cond, de e1, de e2, dt t)
-    | Expr.Let (name, typ, args, e1, e2) ->
-        Let(name, dt typ, (List.map (fun (s, t) -> s, dt t) args), de e1, de e2)
-    | Expr.App (f, args, t) -> App(de f, List.map de args, dt t)
-    | Expr.Var (name, typ) -> Expr.Var(name, dt typ)
+    | Expr.Infix (e) ->
+        Expr.Infix(
+            { Op = e.Op
+              Left = de e.Left
+              Right = de e.Right
+              Type = dt e.Type }
+        )
+    | Expr.If (e) ->
+        Expr.If(
+            { Cond = de e.Cond
+              Expr1 = de e.Expr1
+              Expr2 = de e.Expr2
+              Type = dt e.Type }
+        )
+    | Expr.Let (e) ->
+        Let(
+            { Name = e.Name
+              Type = dt e.Type
+              Args = (List.map (fun v -> { Name = v.Name; Type = dt v.Type }) e.Args)
+              Expr1 = de e.Expr1
+              Expr2 = de e.Expr2 }
+        )
+    | Expr.App (e) ->
+        Expr.App(
+            { Fun = de e.Fun
+              Args = List.map de e.Args
+              Type = dt e.Type }
+        )
+    | Expr.Var (e) -> Expr.Var({ Name = e.Name; Type = dt e.Type })
 
 and derefNode: Node -> Node =
     function
@@ -95,57 +118,59 @@ let rec infer (env: TypeEnv) (e: Expr) : Type =
         | Expr.Int (_) -> Type.Int
         | Expr.String (_) -> Type.String
         | Expr.Unit -> Type.Unit
-        | Expr.Infix (op, lhs, rhs, t) ->
-            let t1 = (infer env lhs)
-            let t2 = (infer env rhs)
+        | Expr.Infix (e) ->
+            let t1 = (infer env e.Left)
+            let t2 = (infer env e.Right)
             unify t1 t2
 
-            match op with
-            | "=" -> unify t Type.Bool
+            match e.Op with
+            | "=" -> unify e.Type Type.Bool
             | "+"
-            | "-" -> unify t t1
-            | _ -> failwith (sprintf "Unknown operator `%s`" op)
+            | "-" -> unify e.Type t1
+            | _ -> failwith (sprintf "Unknown operator `%s`" e.Op)
 
-            t
-        | Expr.If (cond, e1, e2, t) ->
-            unify Type.Bool (infer env cond)
-            let t1 = (infer env e1) in
-            let t2 = (infer env e2) in
+            e.Type
+        | Expr.If (e) ->
+            unify Type.Bool (infer env e.Cond)
+            let t1 = (infer env e.Expr1) in
+            let t2 = (infer env e.Expr2) in
             unify t1 t2
-            unify t t1
-            t
-        | Expr.Let (name, t, args, e1, e2) ->
+            unify e.Type t1
+            e.Type
+        | Expr.Let (e) ->
             unify
-                t
-                (if List.length args > 0 then
-                     Type.Fun(List.map snd args, infer (TypeEnv.addList args env) e1)
+                e.Type
+                (if List.length e.Args > 0 then
+                     Type.Fun(
+                         List.map (fun (a: Var) -> a.Type) e.Args,
+                         infer
+                             (TypeEnv.addList (List.map (fun a -> (a.Name, a.Type)) e.Args) env)
+                             e.Expr1
+                     )
                  else
-                     infer env e1)
+                     infer env e.Expr1)
 
-            infer (TypeEnv.add name t env) e2
-        | Expr.App (f, args, t) ->
-            let ft = infer env f in
-            let nargs = List.length args in
+            infer (TypeEnv.add e.Name e.Type env) e.Expr2
+        | Expr.App (e) ->
+            let ft = infer env e.Fun in
+            let nargs = List.length e.Args in
 
             match ft with
             | (Fun (fargs, rt)
             | Type.Var ({ contents = Some (Fun (fargs, rt)) })) when List.length fargs > nargs ->
                 // partial apply
-                List.iter2 unify fargs[0 .. (nargs - 1)] (List.map (infer env) args)
-                unify t (Fun(fargs[(nargs) .. (List.length fargs)], rt))
-                t
+                List.iter2 unify fargs[0 .. (nargs - 1)] (List.map (infer env) e.Args)
+                unify e.Type (Fun(fargs[(nargs) .. (List.length fargs)], rt))
+                e.Type
             | _ ->
-                unify ft (Type.Fun(List.map (infer env) args, t))
-                // t is still newType here.
-                // it will be replaced by calling unify at caller of this func
-                t
-        | Expr.Var (name, t) ->
-            if TypeEnv.exists name env then
-                let t' = TypeEnv.find name env in
-                unify t t'
-                t'
+                unify ft (Type.Fun(List.map (infer env) e.Args, e.Type))
+                e.Type
+        | Expr.Var (e) ->
+            if TypeEnv.exists e.Name env then
+                unify e.Type (TypeEnv.find e.Name env)
+                e.Type
             else
-                raise (UndefinedVariableException name)
+                raise (UndefinedVariableException e.Name)
     with
     | UnifyException (t1, t2) ->
         raise (ExprException(e, Some(sprintf "mismatched type: %A and %A" t1 t2)))

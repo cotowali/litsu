@@ -6,12 +6,49 @@ namespace Litsu
             | Int of int64
             | String of string
             | Unit
-            | Infix of string * Expr * Expr * Type.Type
-            | Let of
-              string * Type.Type * (string * Type.Type) list * Expr * Expr
-            | App of Expr * Expr list * Type.Type
-            | Var of string * Type.Type
-            | If of Expr * Expr * Expr * Type.Type
+            | Infix of Infix
+            | Let of Let
+            | App of App
+            | Var of Var
+            | If of If
+        
+        and Infix =
+            {
+              Op: string
+              Left: Expr
+              Right: Expr
+              Type: Type.Type
+            }
+        
+        and Let =
+            {
+              Name: string
+              Type: Type.Type
+              Args: Var list
+              Expr1: Expr
+              Expr2: Expr
+            }
+        
+        and App =
+            {
+              Fun: Expr
+              Args: Expr list
+              Type: Type.Type
+            }
+        
+        and Var =
+            {
+              Name: string
+              Type: Type.Type
+            }
+        
+        and If =
+            {
+              Cond: Expr
+              Expr1: Expr
+              Expr2: Expr
+              Type: Type.Type
+            }
         
         val typ: _arg1: Expr -> Type.Type
         
