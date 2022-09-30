@@ -28,6 +28,7 @@ rule read = parse
 | "(*"       { comment lexbuf; read lexbuf }
 | newline    { newline lexbuf; read lexbuf }
 | "let"      { LET }
+| "rec"      { REC }
 | "in"       { IN }
 | "if"       { IF }
 | "then"     { THEN }

@@ -14,7 +14,7 @@ let parse_error_rich = Some(fun (ctx: ParseErrorContext<_>) -> failwith "xxx")
 %token <int64>  INT
 %token <string> STRING
 %token <string> IDENT
-%token LET IN
+%token LET REC IN
 %token IF THEN ELSE
 %token SEMICOLON
 
@@ -81,18 +81,30 @@ expr:
   | simple_expr actual_args
     %prec prec_app
     { Expr.App({ Fun = $1; Args = $2; Type = newType(); }) }
-  | LET IDENT EQ expr IN expr
-    %prec prec_let
-    { Expr.Let({ Name = $2; Type = newType(); Args = []; Expr1 = $4; Expr2 = $6; }) }
   | LET IDENT formal_args EQ expr IN expr
     %prec prec_let
-    { Expr.Let({ Name = $2; Type = newType(); Args = $3; Expr1 = $5; Expr2 = $7; }) }
+    { Expr.Let({
+      Name = $2
+      Type = newType()
+      IsRec = false
+      Args = $3
+      Expr1 = $5
+      Expr2 = $7 }) }
+  | LET REC IDENT formal_args EQ expr IN expr
+    %prec prec_let
+    { Expr.Let({
+      Name = $3
+      Type = newType()
+      IsRec = true
+      Args = $4
+      Expr1 = $6
+      Expr2 = $8 }) }
   | IF expr THEN expr ELSE expr
     %prec prec_if
     { Expr.If({ Cond = $2; Expr1 = $4; Expr2 = $6; Type = newType(); }) }
 
-
 formal_args:
+  | { [] }
   | IDENT formal_args
     { { Name = $1; Type = newType(); } :: $2 }
   | LPAREN RPAREN formal_args

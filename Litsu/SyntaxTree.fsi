@@ -25,6 +25,7 @@ namespace Litsu
               Name: string
               Type: Type.Type
               Args: Var list
+              IsRec: bool
               Expr1: Expr
               Expr2: Expr
             }

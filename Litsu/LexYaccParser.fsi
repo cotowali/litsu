@@ -23,6 +23,7 @@ namespace Litsu
             | THEN
             | ELSE
             | LET
+            | REC
             | IN
             | IDENT of string
             | STRING of string
@@ -47,6 +48,7 @@ namespace Litsu
             | TOKEN_THEN
             | TOKEN_ELSE
             | TOKEN_LET
+            | TOKEN_REC
             | TOKEN_IN
             | TOKEN_IDENT
             | TOKEN_STRING

@@ -95,6 +95,7 @@ let rec derefExpr (expr: Expr) : Expr =
             { Name = e.Name
               Type = dt e.Type
               Args = (List.map (fun v -> { Name = v.Name; Type = dt v.Type }) e.Args)
+              IsRec = e.IsRec
               Expr1 = de e.Expr1
               Expr2 = de e.Expr2 }
         )
@@ -145,6 +146,8 @@ let rec infer (env: TypeEnv) (e: Expr) : Type =
             unify e.Type t1
             e.Type
         | Expr.Let (e) ->
+            let env = if e.IsRec then TypeEnv.add e.Name e.Type env else env
+
             unify
                 e.Type
                 (if List.length e.Args > 0 then
@@ -157,7 +160,7 @@ let rec infer (env: TypeEnv) (e: Expr) : Type =
                  else
                      infer env e.Expr1)
 
-            infer (TypeEnv.add e.Name e.Type env) e.Expr2
+            infer (if e.IsRec then env else TypeEnv.add e.Name e.Type env) e.Expr2
         | Expr.App (e) ->
             let ft = infer env e.Fun in
             let nargs = List.length e.Args in
