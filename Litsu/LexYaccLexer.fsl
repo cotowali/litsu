@@ -38,6 +38,10 @@ rule read = parse
 | '-'        { MINUS }
 | '='        { EQ }
 | "<>"       { LESS_GREATER }
+| '<'        { LESS }
+| "<="       { LESS_EQ }
+| '>'        { GREATER }
+| ">="       { GREATER_EQ }
 | '('        { LPAREN }
 | ')'        { RPAREN }
 | '"'        { read_string "" lexbuf }

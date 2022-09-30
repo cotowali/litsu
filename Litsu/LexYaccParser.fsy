@@ -20,13 +20,13 @@ let parse_error_rich = Some(fun (ctx: ParseErrorContext<_>) -> failwith "xxx")
 
 %token LPAREN RPAREN
 %token PLUS MINUS
-%token EQ LESS_GREATER
+%token EQ LESS_GREATER LESS LESS_EQ GREATER GREATER_EQ
 
 // order by operator precedence
 %nonassoc IN
 %right prec_let
 %right prec_if
-%left EQ LESS_GREATER
+%left EQ LESS_GREATER LESS LESS_EQ GREATER GREATER_EQ
 %left PLUS MINUS
 %left prec_app
 
@@ -65,6 +65,14 @@ expr:
     { Expr.Infix({ Op = "="; Left = $1; Right = $3; Type = newType(); }) }
   | expr LESS_GREATER expr
     { Expr.Infix({ Op = "<>"; Left = $1; Right = $3; Type = newType(); }) }
+  | expr LESS expr
+    { Expr.Infix({ Op = "<"; Left = $1; Right = $3; Type = newType(); }) }
+  | expr LESS_EQ expr
+    { Expr.Infix({ Op = "<="; Left = $1; Right = $3; Type = newType(); }) }
+  | expr GREATER expr
+    { Expr.Infix({ Op = ">"; Left = $1; Right = $3; Type = newType(); }) }
+  | expr GREATER_EQ expr
+    { Expr.Infix({ Op = ">="; Left = $1; Right = $3; Type = newType(); }) }
   | simple_expr actual_args
     %prec prec_app
     { Expr.App({ Fun = $1; Args = $2; Type = newType(); }) }

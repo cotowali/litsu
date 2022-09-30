@@ -62,7 +62,11 @@ let rec private genExpr (ctx: Context) (write: writeF) (expr: Expr) : unit =
                   | Type.Int -> sprintf "$(( ( %s ) %s ( %s ) ))" (f wo e.Left) e.Op (f wo e.Right)
                   | _ -> unreachable ())
              | "="
-             | "<>" ->
+             | "<>"
+             | "<"
+             | ">"
+             | "<="
+             | ">=" ->
                  let op =
                      (match e.Op with
                       | "=" ->
@@ -73,6 +77,10 @@ let rec private genExpr (ctx: Context) (write: writeF) (expr: Expr) : unit =
                           (match typ e.Left with
                            | Type.Int -> "-ne"
                            | _ -> "!=")
+                      | "<" -> "-lt"
+                      | "<=" -> "-le"
+                      | ">" -> "-gt"
+                      | ">=" -> "-ge"
                       | _ -> unreachable ())
 
                  let cond = sprintf "[ \"%s\" %s \"%s\" ]" (f wo e.Left) op (f wo e.Right) in
