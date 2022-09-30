@@ -75,10 +75,13 @@ let rec private genExpr (ctx: Context) (write: writeF) (expr: Expr) : unit =
             let mutable out = sprintf "$(if [ \"%s\" = '%s' ]\n" (f wo e.Cond) sTrue
             let writeInner s = out <- out + s
             let writeOuter s = out <- s + out
+            writeInner (ctxIndentStr ctx)
             writeInner "then\n"
             genExpr { ctx with IndentN = ctx.IndentN + 1 } writeInner e.Expr1
+            writeInner (ctxIndentStr ctx)
             writeInner "else\n"
             genExpr { ctx with IndentN = ctx.IndentN + 1 } writeInner e.Expr2
+            writeInner (ctxIndentStr ctx)
             writeInner "fi)"
             out
         | Expr.Let (e) ->
