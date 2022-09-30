@@ -61,11 +61,18 @@ let rec private genExpr (ctx: Context) (write: writeF) (expr: Expr) : unit =
                  (match e.Type with
                   | Type.Int -> sprintf "$(( ( %s ) %s ( %s ) ))" (f wo e.Left) e.Op (f wo e.Right)
                   | _ -> unreachable ())
-             | "=" ->
+             | "="
+             | "<>" ->
                  let op =
-                     (match e.Type with
-                      | Type.Int -> "-eq"
-                      | Type.Bool -> "="
+                     (match e.Op with
+                      | "=" ->
+                          (match typ e.Left with
+                           | Type.Int -> "-eq"
+                           | _ -> "=")
+                      | "<>" ->
+                          (match typ e.Left with
+                           | Type.Int -> "-ne"
+                           | _ -> "!=")
                       | _ -> unreachable ())
 
                  let cond = sprintf "[ \"%s\" %s \"%s\" ]" (f wo e.Left) op (f wo e.Right) in

@@ -37,6 +37,7 @@ rule read = parse
 | '+'        { PLUS }
 | '-'        { MINUS }
 | '='        { EQ }
+| "<>"       { LESS_GREATER }
 | '('        { LPAREN }
 | ')'        { RPAREN }
 | '"'        { read_string "" lexbuf }

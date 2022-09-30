@@ -7,6 +7,7 @@ namespace Litsu
         
         type token =
             | EQ
+            | LESS_GREATER
             | PLUS
             | MINUS
             | LPAREN
@@ -24,6 +25,7 @@ namespace Litsu
         
         type tokenId =
             | TOKEN_EQ
+            | TOKEN_LESS_GREATER
             | TOKEN_PLUS
             | TOKEN_MINUS
             | TOKEN_LPAREN
