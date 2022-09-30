@@ -19,7 +19,7 @@ let parse_error_rich = Some(fun (ctx: ParseErrorContext<_>) -> failwith "xxx")
 %token SEMICOLON
 
 %token LPAREN RPAREN
-%token PLUS MINUS
+%token PLUS MINUS MUL DIV
 %token EQ LESS_GREATER LESS LESS_EQ GREATER GREATER_EQ
 
 // order by operator precedence
@@ -28,6 +28,7 @@ let parse_error_rich = Some(fun (ctx: ParseErrorContext<_>) -> failwith "xxx")
 %right prec_if
 %left EQ LESS_GREATER LESS LESS_EQ GREATER GREATER_EQ
 %left PLUS MINUS
+%left MUL DIV
 %left prec_app
 
 %type <SyntaxTree.Program> program
@@ -61,6 +62,10 @@ expr:
     { Expr.Infix({ Op = "+"; Left = $1; Right = $3; Type = newType(); }) }
   | expr MINUS expr
     { Expr.Infix({ Op = "-"; Left = $1; Right = $3; Type = newType(); }) }
+  | expr MUL expr
+    { Expr.Infix({ Op = "*"; Left = $1; Right = $3; Type = newType(); }) }
+  | expr DIV expr
+    { Expr.Infix({ Op = "/"; Left = $1; Right = $3; Type = newType(); }) }
   | expr EQ expr
     { Expr.Infix({ Op = "="; Left = $1; Right = $3; Type = newType(); }) }
   | expr LESS_GREATER expr

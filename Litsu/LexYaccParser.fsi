@@ -14,6 +14,8 @@ namespace Litsu
             | GREATER_EQ
             | PLUS
             | MINUS
+            | MUL
+            | DIV
             | LPAREN
             | RPAREN
             | SEMICOLON
@@ -36,6 +38,8 @@ namespace Litsu
             | TOKEN_GREATER_EQ
             | TOKEN_PLUS
             | TOKEN_MINUS
+            | TOKEN_MUL
+            | TOKEN_DIV
             | TOKEN_LPAREN
             | TOKEN_RPAREN
             | TOKEN_SEMICOLON

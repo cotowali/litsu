@@ -57,7 +57,10 @@ let rec private genExpr (ctx: Context) (write: writeF) (expr: Expr) : unit =
         | Expr.Infix (e) ->
             (match e.Op with
              | "+"
-             | "-" ->
+             | "-"
+             | "*"
+             | "/"
+             | "%" ->
                  (match e.Type with
                   | Type.Int -> sprintf "$(( ( %s ) %s ( %s ) ))" (f wo e.Left) e.Op (f wo e.Right)
                   | _ -> unreachable ())

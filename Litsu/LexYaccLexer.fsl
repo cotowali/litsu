@@ -36,6 +36,8 @@ rule read = parse
 | ';'        { SEMICOLON }
 | '+'        { PLUS }
 | '-'        { MINUS }
+| '*'        { MUL }
+| '/'        { DIV }
 | '='        { EQ }
 | "<>"       { LESS_GREATER }
 | '<'        { LESS }

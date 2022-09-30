@@ -131,7 +131,9 @@ let rec infer (env: TypeEnv) (e: Expr) : Type =
             | ">"
             | ">=" -> unify e.Type Type.Bool
             | "+"
-            | "-" -> unify e.Type t1
+            | "-"
+            | "*"
+            | "/" -> unify e.Type t1
             | _ -> failwith (sprintf "Unknown operator `%s`" e.Op)
 
             e.Type
